@@ -3,7 +3,7 @@
 widget = "experience"  # See https://sourcethemes.com/academic/docs/page-builder/
 headless = true  # This file represents a page section.
 active = true  # Activate this widget? true/false
-weight = 40  # Order that this section will appear.
+weight = 120  # Order that this section will appear.
 
 title = "Experience"
 subtitle = ""
@@ -18,27 +18,39 @@ date_format = "Jan 2006"
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 [[experience]]
-  title = "CEO"
-  company = "GenCoin"
-  company_url = ""
-  location = "California"
-  date_start = "2017-01-01"
+  title = "Graduate Student"
+  company = "WARPLab"
+  company_url = "http://warp.whoi.edu"
+  location = "Woods Hole, MA"
+  date_start = "2018-06-25"
   date_end = ""
-  description = """
-  Responsibilities include:
-  
-  * Analysing
-  * Modelling
-  * Deploying
-  """
+  description = ""
 
 [[experience]]
-  title = "Professor"
-  company = "University X"
-  company_url = ""
-  location = "California"
-  date_start = "2016-01-01"
-  date_end = "2016-12-31"
-  description = """Taught electronic engineering and researched semiconductor physics."""
+  title = "Software Team Lead"
+  company = "aUToronto"
+  company_url = "http://www.autodrive.utoronto.ca"
+  location = "Toronto, Canada"
+  date_start = "2017-06-01"
+  date_end = "2018-05-01"
+  description = ""
+
+[[experience]]
+  title = "Software Engineering Intern"
+  company = "Zebra Technologies Inc."
+  company_url = "https://www.zebra.com"
+  location = "Mississauga, Canada"
+  date_start = "2016-05-01"
+  date_end = "2017-08-01"
+  description = """Developed C++14 applications and libraries to support new product designs and improvements on the Engineering Product Innovation team."""
+
+[[experience]]
+  title = "Android Developer"
+  company = "Wattpad Inc."
+  company_url = "https://wattpad.com"
+  location = "Toronto, Canada"
+  date_start = "2016-05-01"
+  date_end = "2016-09-01"
+  description = ""
 
 +++

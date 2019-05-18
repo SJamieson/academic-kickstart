@@ -49,7 +49,7 @@ social:
   link: 'mailto:sjamieson@mit.edu'  # For a direct email link, use "mailto:test@example.org".
 - icon: google-scholar
   icon_pack: ai
-  link: https://scholar.google.co.uk/citations?user=uOpGWFgAAAAJ
+  link: https://scholar.google.com/citations?user=uOpGWFgAAAAJ
 - icon: orcid
   icon_pack: ai
   link: https://orcid.org/0000-0003-4842-0373
@@ -81,4 +81,4 @@ email: ""
 #- Visitors
 ---
 
-Stewart Jamieson is a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> in Applied Ocean Science and Engineering. I am pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. I am co-supervised by <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a>.
+I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> (WHOI) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (MIT).
