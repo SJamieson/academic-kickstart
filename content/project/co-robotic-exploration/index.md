@@ -1,5 +1,5 @@
 +++
-title = "Co Robotic Exploration"
+title = "Co-Robotic Scientific Exploration"
 date = 2019-05-18T17:19:19-04:00
 draft = false
 
@@ -8,7 +8,7 @@ draft = false
 tags = []
 
 # Project summary to display on homepage.
-summary = "Co-Robotic Scientific Exploration of the Oceans"
+summary = "Employing teams of robots and scientists to work together to better understand Earth's oceans."
 
 # Slides (optional).
 #   Associate this page with Markdown slides.
