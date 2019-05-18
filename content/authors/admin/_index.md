@@ -14,10 +14,10 @@ role: Graduate Student
 
 # Organizations/Affiliations
 organizations:
-- name: Massachusetts Institute of Technology (MIT)
-  url: "https://www.mit.edu"
-- name: Woods Hole Oceanographic Institution (WHOI)
-  url: "https://www.whoi.edu"
+- name: WHOI Autonomous Robotics & Perception Laboratory
+  url: "http://www.warp.whoi.edu"
+- name: Aerospace Controls Laboratory
+  url: "http://www.acl.mit.edu"
 
 # Short bio (displayed in user profile at end of posts)
 bio: My research interests include semantic mapping and path planning for multi-agent underwater robotic systems.
@@ -81,4 +81,4 @@ email: ""
 #- Visitors
 ---
 
-I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> (WHOI) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (MIT).
+I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> (<a href="https://www.whoi.edu">WHOI</a>) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (<a href="https://www.mit.edu">MIT</a>).
