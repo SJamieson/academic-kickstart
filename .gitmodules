@@ -2,3 +2,7 @@
 	path = public
 	url = git@github.com:SJamieson/SJamieson.github.io.git
 	branch = master
+[submodule "themes/academic"]
+	path = themes/academic
+	url = git@github.com:SJamieson/hugo-academic.git
+	branch = master
