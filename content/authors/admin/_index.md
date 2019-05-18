@@ -81,4 +81,4 @@ email: ""
 #- Visitors
 ---
 
-Stewart Jamieson is a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> in Applied Ocean Science and Engineering. I am pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. I am co-supervised by <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a>.
+Stewart Jamieson is a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> in Applied Ocean Science and Engineering. I am pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. I am co-supervised by <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a>.
