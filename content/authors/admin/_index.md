@@ -81,4 +81,4 @@ email: ""
 #- Visitors
 ---
 
-I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="http://warp.whoi.edu/">Dr. Yogesh Girdhar</a> (<a href="https://www.whoi.edu">WHOI</a>) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (<a href="https://www.mit.edu">MIT</a>).
+I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="https://www.whoi.edu/profile/ygirdhar">Dr. Yogesh Girdhar</a> (<a href="https://www.whoi.edu">WHOI</a>) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (<a href="https://www.mit.edu">MIT</a>).
