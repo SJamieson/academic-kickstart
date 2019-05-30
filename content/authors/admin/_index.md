@@ -15,9 +15,9 @@ role: Graduate Student
 # Organizations/Affiliations
 organizations:
 - name: WHOI Autonomous Robotics & Perception Laboratory
-  url: "http://www.warp.whoi.edu"
+  url: "http://warp.whoi.edu/about/"
 - name: Aerospace Controls Laboratory
-  url: "http://www.acl.mit.edu"
+  url: "http://acl.mit.edu/people/sjamieso"
 
 # Short bio (displayed in user profile at end of posts)
 bio: My research interests include semantic mapping and path planning for multi-agent underwater robotic systems.
@@ -25,7 +25,8 @@ bio: My research interests include semantic mapping and path planning for multi-
 interests:
 - Robotic Perception
 - Bayesian Modelling and Inference
-- Deep Learning
+- Deep Learning for Vision
+- Multi-Robot Systems
 
 education:
   courses:

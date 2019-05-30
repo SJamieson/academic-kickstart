@@ -49,8 +49,17 @@ date_format = "Jan 2006"
   company = "Wattpad Inc."
   company_url = "https://wattpad.com"
   location = "Toronto, Canada"
-  date_start = "2016-05-01"
-  date_end = "2016-09-01"
+  date_start = "2015-05-01"
+  date_end = "2015-08-31"
+  description = ""
+
+[[experience]]
+  title = "Android QA Developer"
+  company = "Wattpad Inc."
+  company_url = "https://wattpad.com"
+  location = "Toronto, Canada"
+  date_start = "2014-05-01"
+  date_end = "2014-08-31"
   description = ""
 
 +++
