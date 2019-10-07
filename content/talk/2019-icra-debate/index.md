@@ -18,7 +18,7 @@ location = "Montreal, Canada"
 
 # Name of event and optional event URL.
 event = "Debates on the Future of Robotics Research"
-event_url = "http://www.roboticsdebates.org"
+event_url = "http://www.roboticsdebates.org/2019/index.html"
 
 # Abstract. What's your talk about?
 abstract = """
