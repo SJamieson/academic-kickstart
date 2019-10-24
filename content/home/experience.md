@@ -18,13 +18,13 @@ date_format = "Jan 2006"
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 [[experience]]
-  title = "Graduate Student"
+  title = "Graduate Research Assistant"
   company = "WARPLab"
   company_url = "http://warp.whoi.edu"
   location = "Woods Hole, MA"
   date_start = "2018-06-25"
   date_end = ""
-  description = ""
+  description = """Developing autonomous exploration algorithms for robot teams operating in the Benthic zone and assisting deploying these algorithms onto WHOI's world-class deep sea exploration vehicles (e.g. Sentry)."""
 
 [[experience]]
   title = "Software Team Lead"
@@ -33,7 +33,7 @@ date_format = "Jan 2006"
   location = "Toronto, Canada"
   date_start = "2017-06-01"
   date_end = "2018-05-01"
-  description = ""
+  description = """Led a subteam of 12 graduate and undergraduate students working to develop the system software architecture, sensor drivers, vehicle control interface, and software services for an autonomous Chevrolet Bolt."""
 
 [[experience]]
   title = "Software Engineering Intern"
