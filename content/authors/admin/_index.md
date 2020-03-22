@@ -14,7 +14,7 @@ role: Graduate Student
 
 # Organizations/Affiliations
 organizations:
-- name: WHOI Autonomous Robotics & Perception Laboratory
+- name: WHOI's Autonomous Robotics & Perception Laboratory
   url: "http://warp.whoi.edu/about/"
 - name: Aerospace Controls Laboratory
   url: "http://acl.mit.edu/people/sjamieso"
