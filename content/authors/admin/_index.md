@@ -23,10 +23,10 @@ organizations:
 bio: My research interests include semantic mapping and path planning for multi-agent underwater robotic systems.
 
 interests:
-- Robotic Perception
-- Bayesian Modelling and Inference
-- Deep Learning for Vision
+- Online Active Learning
 - Multi-Robot Systems
+- Deep Semantic Representations
+- Bayesian Modelling and Inference
 
 education:
   courses:
@@ -63,14 +63,14 @@ social:
 - icon: linkedin
   icon_pack: fab
   link: https://www.linkedin.com/in/stewart-jamieson/
-#- icon: arxiv
-#  icon_pack: ai
-#  link: https://scholar.google.co.uk/citations?user=uOpGWFgAAAAJ
+- icon: arxiv
+  icon_pack: ai
+  link: https://arxiv.org/search/cs?searchtype=author&query=Jamieson%2C+S
 # Link to a PDF of your resume/CV from the About widget.
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.  
-# - icon: cv
-#   icon_pack: ai
-#   link: files/cv.pdf
+- icon: cv
+  icon_pack: ai
+  link: files/cv.pdf
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: ""
@@ -82,4 +82,4 @@ email: ""
 #- Visitors
 ---
 
-I am a graduate student in the <a href="http://mit.whoi.edu/">MIT-WHOI Joint Program</a> studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments, such as the ocean, where communication is limited. My co-supervisors are <a href="https://www.whoi.edu/profile/ygirdhar">Dr. Yogesh Girdhar</a> (<a href="https://www.whoi.edu">WHOI</a>) and <a href="http://www.mit.edu/people/jhow/">Dr. Jonathan How</a> (<a href="https://www.mit.edu">MIT</a>).
+I am a graduate student in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) studying Applied Ocean Science and Engineering. I'm pursuing the development of a multi-robot system that can autonomously explore and build semantics maps of environments where communication is limited, such as the ocean. My co-supervisors are [Dr. Yogesh Girdhar]("https://www.whoi.edu/profile/ygirdhar") ([WHOI](https://www.whoi.edu)) and [Dr. Jonathan How](http://www.mit.edu/people/jhow/) ([MIT](https://www.mit.edu)).
