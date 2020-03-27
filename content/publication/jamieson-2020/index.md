@@ -9,5 +9,6 @@ featured: false
 publication: "*IEEE International Conference on Robotics and Automation*"
 tags: ["⛔ No DOI found"]
 url_pdf: "https://arxiv.org/abs/2003.05016"
+url_video: "https://www.youtube.com/watch?v=NH1G8u2hbEU"
 ---
 
