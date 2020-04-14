@@ -17,3 +17,24 @@
   width: 100%;
   max-width: 1100px;
 }
+
+.home-section {
+  padding: 60px 0 30px 0;
+}
+
+.media.stream-item {
+  margin-bottom: 1rem;
+}
+
+.section-heading h1 {
+  font-size: 2rem;
+}
+
+.col-lg-4 {
+  max-width: 29%;
+}
+
+.col-lg-8 {
+  max-width: 71%;
+  flex: 0 0 71%;
+}
