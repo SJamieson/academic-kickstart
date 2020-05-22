@@ -27,7 +27,7 @@ subtitle = ""
   [content.filters]
     tag = ""
     category = ""
-    publication_type = ""
+    publication_type = "1,2,3,4,5,6"
     author = "Stewart Jamieson"
     exclude_featured = false
   
