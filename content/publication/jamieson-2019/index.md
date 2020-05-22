@@ -7,6 +7,5 @@ publication_types: ["1"]
 abstract: ""
 featured: false
 publication: "*Debates on the Future of Robotics Research Workshop at ICRA 2019*"
-tags: ["⛔ No DOI found"]
 ---
 
