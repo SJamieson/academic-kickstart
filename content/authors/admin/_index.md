@@ -31,13 +31,13 @@ interests:
 education:
   courses:
   - course: PhD in Applied Ocean Science and Engineering
-    institution: MIT-WHOI Joint Program
+    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution
     year: 2023 (Expected)
   - course: SM in Aeronautics and Astronautics
-    institution: Massachusetts Institute of Technology
-    year: 2020 (Expected)
+    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
+    year: 2020
   - course: BASc in Engineering Science - Robotics
-    institution: University of Toronto
+    institution: University of Toronto (3.83/4.0 CGPA)
     year: 2018
 
 # Social/Academic Networking
