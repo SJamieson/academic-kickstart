@@ -10,13 +10,23 @@ subtitle = ""
 
 # Date format
 #   Refer to https://sourcethemes.com/academic/docs/customization/#date-format
-date_format = "Jan 2006"
+date_format = "January 2006"
 
 # Accomplishments.
 #   Add/remove as many `[[item]]` blocks below as you like.
 #   `title`, `organization` and `date_start` are the required parameters.
 #   Leave other parameters empty if not required.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
+
+[[item]]
+  organization = "IEEE International Conference on Robotics and Automation (ICRA)"
+  organization_url = "https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra"
+  title = "Won Best Paper Award in Service Robotics at ICRA'20"
+  url = "http://icra2020.org/program/conference-awards"
+  certificate_url = "http://icra2020.org/big-screen"
+  date_start = "2020-06-01"
+  date_end = ""
+  description = ""
 
 [[item]]
   organization = "aUToronto"

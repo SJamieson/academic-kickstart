@@ -4,7 +4,7 @@ title = "The Importance of Deep Learning in Robotics Research"
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
 date = 2019-05-24T11:15:00-04:00
-#date_end = 2019-05-18T17:36:43-04:00
+date_end = 2019-05-24T11:25:00-04:00
 all_day = false
 
 # Schedule page publish date (NOT talk date).
@@ -14,7 +14,7 @@ publishDate = 2019-05-18T17:36:43-04:00
 authors = ["Stewart Jamieson"]
 
 # Location of event.
-location = "Montreal, Canada"
+location = "Montréal, Canada"
 
 # Name of event and optional event URL.
 event = "Debates on the Future of Robotics Research"
