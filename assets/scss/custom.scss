@@ -10,7 +10,7 @@
 
 .container {
   width: 100%;
-  max-width: 1300px;
+  max-width: 1355px;
 }
 
 .article-container {
@@ -26,11 +26,24 @@
   margin-bottom: 1rem;
 }
 
+.media.stream-item .stream-meta {
+  margin: 0px;
+}
+
 .section-heading h1 {
   font-size: 2rem;
+}
+
+.view-list-item {
+  margin-bottom: 0.5rem;
 }
 
 .awards {
   font-weight: bold;
   color: goldenrod;
+}
+
+.universal-wrapper {
+  width: 100%;
+  max-width: 1100px;
 }
