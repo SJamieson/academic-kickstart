@@ -36,4 +36,5 @@ publication_types:
 - '1'
 abstract: ''
 publication: '*Proceedings of SpaceCHI: Human-Computer Interaction for Space Exploration*'
+url_pdf: files/SpaceCHI_Position_Paper.pdf
 ---
