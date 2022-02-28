@@ -31,7 +31,7 @@ interests:
 education:
   courses:
   - course: PhD in Applied Ocean Science and Engineering
-    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution
+    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
     year: 2023 (Expected)
   - course: SM in Aeronautics and Astronautics
     institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
