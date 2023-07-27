@@ -12,11 +12,17 @@ authors:
 - Jonathan P. How
 - Yogesh Girdhar
 tags:
-- '"⛔ No DOI found"'
-- '"Computer Science - Multiagent Systems"'
-- '"Computer Science - Robotics"'
+- Bandwidth
+- Buildings
+- Classification algorithms
+- Computer Science - Multiagent Systems
+- Computer Science - Robotics
+- Conferences
+- Path planning
+- Semantics
+- Supervised learning
 categories: []
-date: '2021-05-01'
+date: '2021-05-30'
 lastmod: 2021-03-29T23:36:43-04:00
 featured: false
 draft: false
@@ -35,7 +41,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-publishDate: '2021-03-30T03:37:56.109301Z'
+publishDate: '2023-07-27T18:42:44.953925Z'
 publication_types:
 - '1'
 abstract: We present a solution to multi-robot distributed semantic mapping of novel
@@ -54,4 +60,8 @@ abstract: We present a solution to multi-robot distributed semantic mapping of n
   maps that do not degrade even as many more local maps are fused.
 publication: '*2021 IEEE International Conference on Robotics and Automation (ICRA)*'
 url_pdf: http://arxiv.org/abs/2103.14805
+doi: 10.1109/ICRA48506.2021.9561934
+links:
+- name: URL
+  url: http://arxiv.org/abs/2103.14805
 ---

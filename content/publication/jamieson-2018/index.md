@@ -1,7 +1,7 @@
 ---
 title: Deep Learning for Robust Vision in Realtime Autonomous Driving
 date: '2018-06-01'
-publishDate: '2021-03-30T03:37:55.795673Z'
+publishDate: '2023-07-27T18:42:44.813490Z'
 authors:
 - Stewart Jamieson
 publication_types:

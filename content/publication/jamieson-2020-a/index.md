@@ -2,7 +2,7 @@
 title: Enabling Human-Robot Cooperation in Scientific Exploration of Bandwidth-Limited
   Environments
 date: '2020-05-01'
-publishDate: '2021-03-30T03:37:56.032449Z'
+publishDate: '2023-07-27T18:42:44.916499Z'
 authors:
 - Stewart Jamieson
 publication_types:
@@ -17,5 +17,8 @@ featured: false
 publication: ''
 url_pdf: https://dspace.mit.edu/handle/1721.1/127067
 doi: 10.1575/1912/25831
+links:
+- name: URL
+  url: https://dspace.mit.edu/handle/1721.1/127067
 ---
 

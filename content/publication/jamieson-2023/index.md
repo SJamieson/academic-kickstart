@@ -39,7 +39,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-publishDate: '2023-07-27T18:37:45.316115Z'
+publishDate: '2023-07-27T18:42:45.027674Z'
 publication_types:
 - '1'
 abstract: Successful applications of complex vision-based behaviours underwater have

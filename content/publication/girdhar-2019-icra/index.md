@@ -1,7 +1,7 @@
 ---
 title: Streaming Scene Maps for Co-Robotic Exploration in Bandwidth Limited Environments
 date: '2019-05-01'
-publishDate: '2021-03-30T03:37:55.713849Z'
+publishDate: '2023-07-27T18:42:44.735711Z'
 authors:
 - Yogesh Girdhar
 - Levi Cai
@@ -20,21 +20,24 @@ abstract: This paper proposes a bandwidth tunable technique for real-time probab
   that learns an unsupervised scene model of the environment and then uses this scene
   model to communicate the spatial distribution of various high-level semantic scene
   constructs to a human operator. Preliminary experiments in an artificially constructed
-  tank environment as well as simulated missions over a 10m× 10m coral reef using
-  real data show the tunability of the maps to different bandwidth constraints and
-  science interests. To our knowledge this is the first paper to quantity how the
-  free parameters of the unsupervised scene model impact both the scientific utility
-  of and bandwidth required to communicate the resulting scene model.
+  tank environment as well as simulated missions over a 10m×10m coral reef using real
+  data show the tunability of the maps to different bandwidth constraints and science
+  interests. To our knowledge this is the first paper to quantity how the free parameters
+  of the unsupervised scene model impact both the scientific utility of and bandwidth
+  required to communicate the resulting scene model.
 featured: false
 publication: '*2019 International Conference on Robotics and Automation (ICRA)*'
 url_pdf: https://arxiv.org/abs/1903.03214
 doi: 10/ggb46q
 tags:
-- '"Bandwidth"'
-- '"Bayes methods"'
-- '"Data models"'
-- '"Oceans"'
-- '"Robot sensing systems"'
-- '"Visualization"'
+- Bandwidth
+- Bayes methods
+- Data models
+- Oceans
+- Robot sensing systems
+- Visualization
+links:
+- name: URL
+  url: https://arxiv.org/abs/1903.03214
 ---
 

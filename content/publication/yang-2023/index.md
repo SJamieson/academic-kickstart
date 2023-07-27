@@ -33,7 +33,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-publishDate: '2023-07-27T18:37:45.351654Z'
+publishDate: '2023-07-27T18:42:45.065517Z'
 publication_types:
 - '1'
 abstract: Coral reefs are fast-changing and complex ecosystems that are crucial to

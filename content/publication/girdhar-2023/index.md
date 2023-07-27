@@ -42,7 +42,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-publishDate: '2023-07-27T18:37:45.239774Z'
+publishDate: '2023-07-27T18:42:44.774843Z'
 publication_types:
 - '1'
 abstract: The current approach to exploring and monitoring complex underwater ecosystems,

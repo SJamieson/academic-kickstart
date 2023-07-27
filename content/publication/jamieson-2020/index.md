@@ -2,7 +2,7 @@
 title: Active Reward Learning for Co-Robotic Vision Based Exploration in Bandwidth
   Limited Environments
 date: '2020-05-01'
-publishDate: '2021-03-30T03:37:55.946375Z'
+publishDate: '2023-07-27T18:42:44.881846Z'
 authors:
 - Stewart Jamieson
 - Jonathan P. How
@@ -26,14 +26,17 @@ url_pdf: https://arxiv.org/abs/2003.05016
 url_video: https://www.youtube.com/watch?v=NH1G8u2hbEU
 award: Winner of Best Paper Award in Service Robotics
 tags:
-- '"Award: Winner of Best Paper Award in Service Robotics"'
-- '"Bandwidth"'
-- '"Computational modeling"'
-- '"Robot sensing systems"'
-- '"Semantics"'
-- '"Trajectory"'
-- '"Video: https://www.youtube.com/watch?v=NH1G8u2hbEU"'
-- '"Visualization"'
+- 'Award: Winner of Best Paper Award in Service Robotics'
+- Bandwidth
+- Computational modeling
+- Robot sensing systems
+- Semantics
+- Trajectory
+- 'Video: https://www.youtube.com/watch?v=NH1G8u2hbEU'
+- Visualization
 doi: 10/gjktt7
+links:
+- name: URL
+  url: https://arxiv.org/abs/2003.05016
 ---
 
