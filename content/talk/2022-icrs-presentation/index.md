@@ -8,7 +8,7 @@ date_end = 2022-07-06T10:15:00+01:00
 all_day = false
 
 # Schedule page publish date (NOT talk date).
-publishDate = 2022-07-01T9:00:00-04:00
+publishDate = 2022-07-01T09:00:00-04:00
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
 authors = ["Stewart Jamieson", "Cynthia Becker", "Amy Apprill", "T. Aran Mooney", "Yogesh Girdhar"]

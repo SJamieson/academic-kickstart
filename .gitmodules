@@ -6,3 +6,6 @@
 	path = themes/academic
 	url = git@github.com:SJamieson/hugo-academic.git
 	branch = master
+[submodule "themes/astatine"]
+	path = themes/astatine
+	url = git@github.com:SJamieson/hugo-astatine-theme.git
