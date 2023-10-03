@@ -27,7 +27,7 @@ abstract: This paper proposes a bandwidth tunable technique for real-time probab
   required to communicate the resulting scene model.
 featured: false
 publication: '*2019 International Conference on Robotics and Automation (ICRA)*'
-url_pdf: https://arxiv.org/abs/1903.03214
+url_pdf: https://arxiv.org/pdf/1903.03214
 doi: 10/ggb46q
 tags:
 - Bandwidth
