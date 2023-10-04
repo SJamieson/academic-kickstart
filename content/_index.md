@@ -54,6 +54,7 @@ publications:
     prioritize limited resources for monitoring and intervention tasks. Here, we explore
     the use of a...
   pdf: http://arxiv.org/abs/2305.02330
+  image: images/Yang2023.png
   links:
   - name: PDF
     url: http://arxiv.org/pdf/2305.02330.pdf
@@ -83,6 +84,7 @@ publications:
     due to the degraded image quality resulting from the physical phenomena involved
     in underwater ima...
   pdf: http://arxiv.org/abs/2303.04025
+  image: images/Jamieson2023.png
   links:
   - name: PDF
     url: http://arxiv.org/pdf/2303.04025.pdf
@@ -124,7 +126,10 @@ publications:
     cameras, or deploying sensor buoys. These approaches often fail to capture the
     full variation and...
   pdf: https://ieeexplore.ieee.org/abstract/document/10161282
+  image: images/Girdhar2023.png
   links:
+  - name: PDF
+    url: pdfs/Girdhar2023.pdf
   - name: Link
     url: https://ieeexplore.ieee.org/abstract/document/10161282
   citation: "@inproceedings{Girdhar2023,\n    author = \"Girdhar, Yogesh and McGuire,\
@@ -157,6 +162,7 @@ publications:
     are based on supervised learning algorithms that cannot classify novel observations
     online. Whil...
   pdf: http://arxiv.org/abs/2103.14805
+  image: images/Jamieson2021.png
   links:
   - name: PDF
     url: http://arxiv.org/pdf/2103.14805.pdf
@@ -279,13 +285,13 @@ publications:
   journal: 2019 International Conference on Robotics and Automation (ICRA)
 talks:
 - authors:
-  - name: LaCapra, V.
-    me: false
   - name: Fernandez, M.
     me: false
   - name: Jamieson, S.
     me: true
-  - name: Kukula, A.
+  - name: Kukulya, A.
+    me: false
+  - name: LaCapra, V.
     me: false
   title: 'Ocean Encounters: ROBOTS'
   date: '2023-05-24'
@@ -300,8 +306,8 @@ talks:
     url: https://www.youtube.com/watch?v=iFrY2NuyIak
   - name: Link
     url: https://www.whoi.edu/ocean-encounter/robots/
-  citation: "@video{LaCapra2023,\n    editor = \"LaCapra, Veronique and Fernandez,\
-    \ Mario and Jamieson, Stewart and Kukula, Amy\",\n    entrysubtype = \"tvbroadcast\"\
+  citation: "@video{LaCapra2023,\n    editor = \"Fernandez, Mario and Jamieson, Stewart\
+    \ and Kukulya, Amy and LaCapra, Veronique\",\n    entrysubtype = \"tvbroadcast\"\
     ,\n    title = \"Ocean {{Encounters}}: {{ROBOTS}}\",\n    shorttitle = \"{{ROBOTS}}\"\
     ,\n    booktitle = \"Ocean {{Encounters}}\",\n    editortype = \"director\",\n\
     \    date = \"2023-05-24\",\n    number = \"Season 5 Episode 4\",\n    url = \"\

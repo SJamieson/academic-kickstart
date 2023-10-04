@@ -60,20 +60,22 @@ def save_to(file, static_dir, subfolder='', new_name=None, preserve_ext=True):
 
 
 def get_url_pdf(entry, static_dir):
+    url = None
     if 'url' in entry.fields:
         url = str(entry.fields['url'])
         if url.lower().endswith('.pdf'):
             return url, url
         if 'arxiv.org' in url and '/abs/' in url:
             return url, url.replace('/abs/', '/pdf/') + '.pdf'
-        return url, None
     files = entry.fields['file'].split(';') if 'file' in entry.fields else []
     for file in files:
         filestr = str(file)
         if filestr.lower().endswith('.pdf'):
-            url = save_to(filestr, static_dir, 'pdfs', entry.key, preserve_ext=True)
-            return url, url
-    return None, None
+            pdf = save_to(filestr, static_dir, 'pdfs', entry.key, preserve_ext=True)
+            if url is None:
+                url = pdf
+            return url, pdf
+    return url, None
 
 
 def get_image(entry):
