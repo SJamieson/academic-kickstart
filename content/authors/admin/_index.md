@@ -54,9 +54,6 @@ social:
 - icon: orcid
   icon_pack: ai
   link: https://orcid.org/0000-0003-4842-0373
-- icon: mendeley
-  icon_pack: ai
-  link: https://www.mendeley.com/profiles/stewart-jamieson/
 - icon: github
   icon_pack: fab
   link: https://github.com/sjamieson
@@ -82,6 +79,6 @@ email: ""
 #- Visitors
 ---
 
-I am a PhD candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) studying Applied Ocean Science and Engineering. I'm developing multi-robot systems that can autonomously explore and build semantic maps of environments where communication is limited, such as the deep sea. I'm particularly interested in how to measure _value of information_ in order to decide when and what to communicate between robots.
+I'm a PhD candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) in Applied Ocean Science and Engineering. I'm developing multi-robot systems that can autonomously explore unfamiliar environments where communication is limited, such as the deep sea. I'm particularly interested in how to measure risk-based value of information in order to decide when and what to communicate between robots.
 
 My co-supervisors are [Dr. Yogesh Girdhar](https://www.whoi.edu/profile/ygirdhar) (<a href="https://www.whoi.edu" target="_blank" rel="noopener">WHOI</a>) and [Dr. Jonathan P. How](http://www.mit.edu/people/jhow/) (<a href="https://www.mit.edu" target="_blank" rel="noopener">MIT</a>).
