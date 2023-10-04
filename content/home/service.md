@@ -44,8 +44,8 @@ date_format = "January 2006"
   title = "Co-Instructor, 2020 WHOI Python Workshop Series"
   url = "https://alexanderlabwhoi.github.io/2020-06-16-whoipython/"
   certificate_url = ""
-  date_start = "2021-06-16"
-  date_end = "2021-06-25"
+  date_start = "2020-06-16"
+  date_end = "2020-06-25"
   description = ""
 
 +++
