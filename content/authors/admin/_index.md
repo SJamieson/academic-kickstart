@@ -23,14 +23,15 @@ organizations:
 bio: My research interests include semantic mapping and path planning for multi-agent underwater robotic systems.
 
 interests:
-- Online Active Learning
-- Multi-Robot Systems
+- Risk-Based Value of Information
+- Deep Reinforcement Learning
+- Multi-Agent Systems
 - Deep Semantic Representations
 - Bayesian Modelling and Inference
 
 education:
   courses:
-  - course: PhD in Applied Ocean Science and Engineering
+  - course: PhD in Autonomous Systems
     institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
     year: 2023 (Expected)
   - course: SM in Aeronautics and Astronautics
@@ -79,6 +80,13 @@ email: ""
 #- Visitors
 ---
 
-I'm a PhD candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) in Applied Ocean Science and Engineering. I'm developing multi-robot systems that can autonomously explore unfamiliar environments where communication is limited, such as the deep sea. I'm particularly interested in how to measure risk-based value of information in order to decide when and what to communicate between robots.
+<!-- I'm a Ph.D. candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) studying risk-aware autonomous systems. I've helped design autonomous robots to efficiently explore unfamiliar environments where communication is limited, [enabling automated coral reef health assessments](https://www.whoi.edu/oceanus/feature/a-curious-robot-to-expand-coral-reef-research/). I've developed *risk-based value of information* methods to optimize human-robot and robot-robot communication protocols for effective multi-agent coordination over low bandwidth. -->
+Hello! I'm a PhD candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/), specializing in risk-aware autonomous systems. I work on designing autonomous robots for unfamiliar environments, such as the deep sea. A key project has been developing robots for [automated coral reef health assessments](https://www.whoi.edu/oceanus/feature/a-curious-robot-to-expand-coral-reef-research/), a crucial technology for global-scale reef conservation.
+
+I've also innovated in *risk-based value of information* measures, which enable effective multi-agent coordination using minimal communications bandwidth. This technology is pivotal for enhancing human-robot and robot-robot interactions.
 
 My co-supervisors are [Dr. Yogesh Girdhar](https://www.whoi.edu/profile/ygirdhar) (<a href="https://www.whoi.edu" target="_blank" rel="noopener">WHOI</a>) and [Prof. Jonathan P. How](http://www.mit.edu/people/jhow/) (<a href="https://www.mit.edu" target="_blank" rel="noopener">MIT</a>).
+
+{{% alert note %}}
+Want to learn more or discuss potential collaborations? Please [reach out](mailto:sjamieson@mit.edu)!
+{{% /alert %}}
