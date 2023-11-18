@@ -1,5 +1,5 @@
 +++
-title = "DeepSeeColor: Realtime Adaptive Color Correction for Autonomous Underwater Vehicles via Deep Learning Methods"
+title = "DeepSeeColor: Realtime Adaptive Color Correction for Autonomous Underwater Vehicles"
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
