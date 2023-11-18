@@ -5,3 +5,6 @@
 resources/
 public/
 *.lock
+jsconfig.json
+node_modules/
+go.sum

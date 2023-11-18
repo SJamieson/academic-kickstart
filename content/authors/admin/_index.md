@@ -1,10 +1,17 @@
 ---
 # Display name
-name: Stewart Jamieson
+title: Stewart Jamieson
 
-# Username (this should match the folder name)
-authors:
-- admin
+# Name pronunciation (optional)
+name_pronunciation: 
+
+# Full name (for SEO)
+first_name: Stewart
+last_name: Jamieson
+
+# Status emoji
+status:
+  icon: ☕️
 
 # Is this the primary user of the site?
 superuser: true
@@ -12,73 +19,115 @@ superuser: true
 # Role/position
 role: PhD Candidate
 
-# Organizations/Affiliations
+# Organizations/Affiliations to show in About widget
 organizations:
-- name: WHOI's Autonomous Robotics & Perception Laboratory
-  url: "http://warp.whoi.edu/about/"
-- name: Aerospace Controls Laboratory
-  url: "http://acl.mit.edu/people/sjamieso"
+  - name: WHOI's Autonomous Robotics & Perception Laboratory
+    url: "http://warp.whoi.edu/about/"
+  - name: Aerospace Controls Laboratory
+    url: "http://acl.mit.edu/people/sjamieso"
 
 # Short bio (displayed in user profile at end of posts)
 bio: My research interests include semantic mapping and path planning for multi-agent underwater robotic systems.
 
+# Interests to show in About widget
 interests:
-- Online Active Learning
-- Multi-Robot Systems
-- Deep Semantic Representations
-- Bayesian Modelling and Inference
+  - Online Active Learning
+  - Multi-Robot Systems
+  - Deep Semantic Representations
+  - Bayesian Modelling and Inference
 
+# Education to show in About widget
 education:
   courses:
-  - course: PhD in Applied Ocean Science and Engineering
-    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
-    year: 2023 (Expected)
-  - course: SM in Aeronautics and Astronautics
-    institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
-    year: 2020
-  - course: BASc in Engineering Science - Robotics
-    institution: University of Toronto (3.83/4.0 CGPA)
-    year: 2018
+    - course: PhD in Applied Ocean Science and Engineering
+      institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
+      year: 2023 (Expected)
+    - course: SM in Aeronautics and Astronautics
+      institution: Massachusetts Institute of Technology & Woods Hole Oceanographic Institution (5.0/5.0 CGPA)
+      year: 2020
+    - course: BASc in Engineering Science - Robotics
+      institution: University of Toronto (3.83/4.0 CGPA)
+      year: 2018
+
+
+# Skills
+# For available icons, see: https://docs.hugoblox.com/getting-started/page-builder/#icons
+skills:
+  - name: Technical
+    items:
+      - name: Python
+        description: ''
+        percent: 80
+        icon: python
+        icon_pack: fab
+      - name: Data Science
+        description: ''
+        percent: 100
+        icon: chart-line
+        icon_pack: fas
+      - name: SQL
+        description: ''
+        percent: 40
+        icon: database
+        icon_pack: fas
+  - name: Hobbies
+    color: '#eeac02'
+    color_border: '#f0bf23'
+    items:
+      - name: Hiking
+        description: ''
+        percent: 60
+        icon: person-hiking
+        icon_pack: fas
+      - name: Cats
+        description: ''
+        percent: 100
+        icon: cat
+        icon_pack: fas
+      - name: Photography
+        description: ''
+        percent: 80
+        icon: camera-retro
+        icon_pack: fas
 
 # Social/Academic Networking
-# For available icons, see: https://sourcethemes.com/academic/docs/page-builder/#icons
+# For available icons, see: https://docs.hugoblox.com/getting-started/page-builder/#icons
 #   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
-#   form "mailto:your-email@example.com" or "#contact" for contact widget.
+#   form "mailto:your-email@example.com" or "/#contact" for contact widget.
 social:
-- icon: envelope
-  icon_pack: fas
-  link: 'mailto:sjamieson@mit.edu'  # For a direct email link, use "mailto:test@example.org".
-- icon: google-scholar
-  icon_pack: ai
-  link: https://scholar.google.com/citations?user=uOpGWFgAAAAJ
-- icon: orcid
-  icon_pack: ai
-  link: https://orcid.org/0000-0003-4842-0373
-- icon: github
-  icon_pack: fab
-  link: https://github.com/sjamieson
-- icon: linkedin
-  icon_pack: fab
-  link: https://www.linkedin.com/in/stewart-jamieson/
-- icon: arxiv
-  icon_pack: ai
-  link: https://arxiv.org/search/cs?searchtype=author&query=Jamieson%2C+S
-# Link to a PDF of your resume/CV from the About widget.
-# To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.  
-- icon: cv
-  icon_pack: ai
-  link: files/cv.pdf
-
-# Enter email to display Gravatar (if Gravatar enabled in Config)
-email: ""
+  - icon: envelope
+    icon_pack: fas
+    link: 'mailto:sjamieson@mit.edu'  # For a direct email link, use "mailto:test@example.org".
+  - icon: google-scholar
+    icon_pack: ai
+    link: https://scholar.google.com/citations?user=uOpGWFgAAAAJ
+  - icon: orcid
+    icon_pack: ai
+    link: https://orcid.org/0000-0003-4842-0373
+  - icon: github
+    icon_pack: fab
+    link: https://github.com/sjamieson
+  - icon: linkedin
+    icon_pack: fab
+    link: https://www.linkedin.com/in/stewart-jamieson/
+  - icon: arxiv
+    icon_pack: ai
+    link: https://arxiv.org/search/cs?searchtype=author&query=Jamieson%2C+S
+  # Link to a PDF of your resume/CV from the About widget.
+  # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.  
+  - icon: cv
+    icon_pack: ai
+    link: files/cv.pdf
 
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.  
 #user_groups:
 #- Researchers
 #- Visitors
+highlight_name: true
 ---
 
 I'm a PhD candidate in the [MIT-WHOI Joint Program](http://mit.whoi.edu/) in Applied Ocean Science and Engineering. I'm developing multi-robot systems that can autonomously explore unfamiliar environments where communication is limited, such as the deep sea. I'm particularly interested in how to measure risk-based value of information in order to decide when and what to communicate between robots.
 
 My co-supervisors are [Dr. Yogesh Girdhar](https://www.whoi.edu/profile/ygirdhar) (<a href="https://www.whoi.edu" target="_blank" rel="noopener">WHOI</a>) and [Prof. Jonathan P. How](http://www.mit.edu/people/jhow/) (<a href="https://www.mit.edu" target="_blank" rel="noopener">MIT</a>).
+{style="text-align: justify;"}
