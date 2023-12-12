@@ -6,7 +6,7 @@ title: Multi-Robot Distributed Semantic Mapping in Unfamiliar Environments throu
 subtitle: ''
 summary: ''
 authors:
-- Stewart Jamieson
+- admin
 - Kaveh Fathian
 - Kasra Khosoussi
 - Jonathan P. How
@@ -43,7 +43,7 @@ image:
 projects: []
 publishDate: '2023-07-27T18:42:44.953925Z'
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: We present a solution to multi-robot distributed semantic mapping of novel
   and unfamiliar environments. Most state-of-the-art semantic mapping systems are
   based on supervised learning algorithms that cannot classify novel observations

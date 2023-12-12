@@ -11,7 +11,7 @@ all_day = false
 publishDate = 2022-07-01T09:00:00-04:00
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = ["Stewart Jamieson", "Cynthia Becker", "Amy Apprill", "T. Aran Mooney", "Yogesh Girdhar"]
+authors = ["admin", "Cynthia Becker", "Amy Apprill", "T. Aran Mooney", "Yogesh Girdhar"]
 
 # Location of event.
 location = "Bremen, Germany"

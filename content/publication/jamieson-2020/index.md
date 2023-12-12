@@ -4,11 +4,11 @@ title: Active Reward Learning for Co-Robotic Vision Based Exploration in Bandwid
 date: '2020-05-01'
 publishDate: '2023-07-27T18:42:44.881846Z'
 authors:
-- Stewart Jamieson
+- admin
 - Jonathan P. How
 - Yogesh Girdhar
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: We present a novel POMDP problem formulation for a robot that must autonomously
   decide where to go to collect new and scientifically relevant images given a limited
   ability to communicate with its human operator. From this formulation we derive

@@ -6,7 +6,7 @@ title: Communicating Efficiently to Enable Human-Multi-Robot Collaboration in Sp
 subtitle: ''
 summary: ''
 authors:
-- Stewart Jamieson
+- admin
 - Jessica E. Todd
 - Jonathan P. How
 - Yogesh Girdhar
@@ -33,7 +33,7 @@ image:
 projects: []
 publishDate: '2023-07-27T18:42:44.991390Z'
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: ''
 publication: '*Proceedings of SpaceCHI: Human-Computer Interaction for Space Exploration*'
 url_pdf: files/SpaceCHI_Position_Paper.pdf

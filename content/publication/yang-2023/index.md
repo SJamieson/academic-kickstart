@@ -8,7 +8,7 @@ summary: ''
 authors:
 - Daniel Yang
 - Levi Cai
-- Stewart Jamieson
+- admin
 - Yogesh Girdhar
 tags:
 - Computer Science - Computer Vision and Pattern Recognition
@@ -35,7 +35,7 @@ image:
 projects: []
 publishDate: '2023-07-27T18:42:45.065517Z'
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: Coral reefs are fast-changing and complex ecosystems that are crucial to
   monitor and study. Biological hotspot detection can help coral reef managers prioritize
   limited resources for monitoring and intervention tasks. Here, we explore the use

@@ -28,7 +28,7 @@ subtitle = ""
     tag = ""
     category = ""
     publication_types = "1,2,3,4,5,6"
-    author = "Stewart Jamieson"
+    author = "admin"
     exclude_featured = false
   
 [design]

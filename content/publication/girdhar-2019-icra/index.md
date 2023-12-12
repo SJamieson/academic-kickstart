@@ -5,13 +5,13 @@ publishDate: '2023-07-27T18:42:44.735711Z'
 authors:
 - Yogesh Girdhar
 - Levi Cai
-- Stewart Jamieson
+- admin
 - Nathan McGuire
 - Genevieve Flaspohler
 - Stefano Suman
 - Brian Claus
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: This paper proposes a bandwidth tunable technique for real-time probabilistic
   scene modeling and mapping to enable co-robotic exploration in communication constrained
   environments such as the deep sea. The parameters of the system enable the user

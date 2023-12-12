@@ -4,9 +4,9 @@ title: Enabling Human-Robot Cooperation in Scientific Exploration of Bandwidth-L
 date: '2020-05-01'
 publishDate: '2023-07-27T18:42:44.916499Z'
 authors:
-- Stewart Jamieson
+- admin
 publication_types:
-- '7'
+- 'thesis'
 abstract: Contemporary scientific exploration most often takes place in highly remote
   and dangerous environments, such as in the deep sea and on other planets. These
   environments are very hostile to humans, which makes robotic exploration the first

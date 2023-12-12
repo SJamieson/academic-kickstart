@@ -8,7 +8,7 @@ authors:
 - Yogesh Girdhar
 - Nathan McGuire
 - Levi Cai
-- Stewart Jamieson
+- admin
 - Seth McCammon
 - Brian Claus
 - John E. San Soucie
@@ -44,7 +44,7 @@ image:
 projects: []
 publishDate: '2023-07-27T18:42:44.774843Z'
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: The current approach to exploring and monitoring complex underwater ecosystems,
   such as coral reefs, is to conduct surveys using diver-held or static cameras, or
   deploying sensor buoys. These approaches often fail to capture the full variation

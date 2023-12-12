@@ -26,6 +26,10 @@
   margin-bottom: 1rem;
 }
 
+.media.stream-item:not(:last-child) {
+  margin-bottom: 1rem; 
+}
+
 .media.stream-item .stream-meta {
   margin: 0px;
 }

@@ -3,9 +3,9 @@ title: Deep Learning for Robust Vision in Realtime Autonomous Driving
 date: '2018-06-01'
 publishDate: '2023-07-27T18:42:44.813490Z'
 authors:
-- Stewart Jamieson
+- admin
 publication_types:
-- '7'
+- 'thesis'
 abstract: The concept of robust vision is explored as a means to improve autonomous
   vehicle performance and safety. This research is applicable to both the University
   of Toronto's self-driving car team, aUToronto, as well as to manufacturers of autonomous

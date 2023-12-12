@@ -6,7 +6,7 @@ title: 'DeepSeeColor: Realtime Adaptive Color Correction for Autonomous Underwat
 subtitle: ''
 summary: ''
 authors:
-- Stewart Jamieson
+- admin
 - Jonathan P. How
 - Yogesh Girdhar
 tags:
@@ -41,7 +41,7 @@ image:
 projects: []
 publishDate: '2023-07-27T18:42:45.027674Z'
 publication_types:
-- '1'
+- 'paper-conference'
 abstract: Successful applications of complex vision-based behaviours underwater have
   lagged behind progress in terrestrial and aerial domains. This is largely due to
   the degraded image quality resulting from the physical phenomena involved in underwater

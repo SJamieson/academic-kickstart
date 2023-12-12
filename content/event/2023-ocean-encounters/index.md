@@ -11,7 +11,7 @@ all_day = false
 publishDate = 2023-05-01T09:00:00-04:00
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = ["Mario Fernandez", "Stewart Jamieson", "Amy Kukulya", "Veronique LaCapra"]
+authors = ["Mario Fernandez", "admin", "Amy Kukulya", "Veronique LaCapra"]
 
 # Location of event.
 location = "Online"
