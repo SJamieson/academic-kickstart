@@ -1,0 +1,279 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SOCIAL, CV_URL, THEMIS_URL } from '../consts';
+
+const education = [
+  {
+    degree: 'Ph.D., Autonomous Systems',
+    school: 'MIT & Woods Hole Oceanographic Institution',
+    detail: 'Aeronautics & Astronautics · 5.0/5.0',
+    year: '2024',
+  },
+  {
+    degree: 'S.M., Autonomous Systems',
+    school: 'MIT & Woods Hole Oceanographic Institution',
+    detail: 'Aeronautics & Astronautics · 5.0/5.0',
+    year: '2020',
+  },
+  {
+    degree: 'B.A.Sc., Engineering Science (Robotics)',
+    school: 'University of Toronto',
+    detail: 'Honours · 3.83/4.0',
+    year: '2018',
+  },
+];
+
+// Appearance slots — drop a photo into /public/images/appearances/ and set `photo`.
+const appearances = [
+  { title: 'MozFest · Mozilla Ventures Portfolio Gathering', when: 'Fall 2025', photo: undefined },
+  { title: 'MIT Enterprise AI Conference', when: '2025', photo: undefined },
+  { title: 'Ai4 — “Capsa: Making AI Trustworthy”', when: 'Aug 2024', photo: undefined },
+  { title: 'T-Challenge (T-Mobile & Deutsche Telekom)', when: 'Jun 2025', photo: undefined },
+];
+---
+
+<BaseLayout title="About" description="Stewart C. Jamieson — Head of Technology at Themis AI, working on risk-aware, uncertainty-aware AI.">
+  <article class="container about">
+    <!-- Intro -->
+    <header class="about-head">
+      <img class="avatar" src="/images/avatar.jpg" alt="Stewart C. Jamieson" width="160" height="160" />
+      <div class="about-intro">
+        <p class="eyebrow">About</p>
+        <h1>Stewart C. Jamieson</h1>
+        <p class="role">Head of Technology, <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a></p>
+        <nav class="socials" aria-label="Contact and profiles">
+          {SOCIAL.map((s) => (
+            <a href={s.href} aria-label={s.label} title={s.label}
+               target={s.href.startsWith('http') ? '_blank' : undefined} rel="me noopener">
+              <Icon name={s.icon} />
+            </a>
+          ))}
+          <a href={CV_URL} aria-label="CV (PDF)" title="CV (PDF)" target="_blank" rel="noopener">
+            <Icon name="cv" />
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Bio -->
+    <section class="prose bio">
+      <p>
+        I’m an AI researcher and technical leader working on <strong>risk-aware, uncertainty-aware
+        machine learning</strong> — AI systems that understand the limits of their own knowledge and
+        act safely because of it. As Head of Technology at <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>,
+        an MIT CSAIL spinoff, I lead the research and product teams building <em>Capsa</em>: a platform
+        that adds efficient uncertainty quantification to any AI model so that developers can detect
+        and eliminate hallucinations, bias, and failure modes before they reach production.
+      </p>
+      <p>
+        This work is the direct continuation of a decade-long research thread. My undergraduate thesis
+        at the University of Toronto applied uncertainty quantification to make autonomous-driving
+        vision safer. My doctoral research in the MIT–WHOI Joint Program — co-supervised by
+        Prof. Jonathan&nbsp;How (MIT) and Dr.&nbsp;Yogesh&nbsp;Girdhar (WHOI) — developed risk-aware online
+        learning and Bayesian methods that let autonomous robots reason about the <em>value of
+        information</em>: deciding what is worth learning, communicating, and acting on when operating
+        in unfamiliar, bandwidth-limited environments like the deep sea.
+      </p>
+      <p>
+        Along the way I’ve been fortunate to have that work recognized — a Best Paper Award at ICRA
+        2020, and a 2024 article in the journal <em>Artificial&nbsp;Intelligence</em> on finding optimal
+        exploration–exploitation trade-offs through Bayesian risk minimization. Today I’m focused on
+        turning those ideas into reliable, trustworthy AI that organizations can actually depend on.
+      </p>
+    </section>
+
+    <!-- Education -->
+    <section class="block">
+      <h2>Education</h2>
+      <ul class="edu-list">
+        {education.map((e) => (
+          <li class="edu-item">
+            <span class="edu-year">{e.year}</span>
+            <span class="edu-body">
+              <span class="edu-degree">{e.degree}</span>
+              <span class="edu-school">{e.school}</span>
+              <span class="edu-detail">{e.detail}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Appearances -->
+    <section class="block">
+      <h2>Recent appearances</h2>
+      <p class="block-note">Talks, panels, and gatherings — photos coming soon.</p>
+      <ul class="appear-grid">
+        {appearances.map((a) => (
+          <li class="appear-card">
+            <div class="appear-photo" data-empty={a.photo ? undefined : 'true'}>
+              {a.photo && <img src={a.photo} alt={a.title} loading="lazy" />}
+            </div>
+            <span class="appear-title">{a.title}</span>
+            <span class="appear-when">{a.when}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: var(--measure-wide);
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) var(--space-xl);
+  }
+  .about-head {
+    display: flex;
+    gap: var(--space-l);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--surface);
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+  }
+  .about-intro h1 {
+    font-size: var(--step-3);
+    margin-block: var(--space-2xs) 0.2rem;
+  }
+  .role {
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+    font-size: var(--step-0);
+  }
+  .socials {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: var(--space-s);
+  }
+  .socials a {
+    display: inline-grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+  }
+  .socials a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .bio {
+    margin-top: var(--space-l);
+    max-width: var(--measure);
+  }
+
+  .block {
+    margin-top: var(--space-xl);
+    max-width: var(--measure);
+  }
+  .block h2 {
+    font-size: var(--step-1);
+    padding-bottom: var(--space-2xs);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-s);
+  }
+  .block-note {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    font-family: var(--font-sans);
+    margin-bottom: var(--space-m);
+  }
+
+  .edu-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .edu-item {
+    display: grid;
+    grid-template-columns: 3.4rem 1fr;
+    gap: var(--space-s);
+  }
+  .edu-year {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    padding-top: 0.2rem;
+  }
+  .edu-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .edu-degree {
+    font-weight: 600;
+  }
+  .edu-school {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .edu-detail {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+
+  .appear-grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-m);
+  }
+  .appear-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .appear-photo {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  .appear-photo[data-empty] {
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--bg-subtle),
+      var(--bg-subtle) 10px,
+      var(--surface) 10px,
+      var(--surface) 20px
+    );
+  }
+  .appear-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .appear-title {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .appear-when {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 30rem) {
+    .edu-item {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

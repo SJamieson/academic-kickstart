@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative OG image; defaults handled in Phase 5. */
+  image?: string;
+  /** When true, marks the page as an article for OG. */
+  article?: boolean;
+  /** Constrain <main> to the reading column by default. */
+  wide?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image,
+  article = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${SITE.titleSuffix}` : `${SITE.title} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const ogImage = new URL(image ?? '/og-default.png', SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.author,
+  url: SITE.url,
+  email: SITE.email,
+  jobTitle: 'Head of Technology',
+  worksFor: { '@type': 'Organization', name: 'Themis AI', url: 'https://themisai.io' },
+  sameAs: [
+    'https://github.com/sjamieson',
+    'https://www.linkedin.com/in/stewart-jamieson/',
+    'https://scholar.google.com/citations?user=uOpGWFgAAAAJ',
+    'https://orcid.org/0000-0003-4842-0373',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+    <link rel="canonical" href={canonical} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+
+    <!-- Open Graph / Twitter (expanded in Phase 5) -->
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:title" content={title ?? SITE.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? SITE.title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+
+    <!-- Set theme before paint to avoid a flash of the wrong theme. -->
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored ?? (prefersDark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

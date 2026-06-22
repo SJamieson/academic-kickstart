@@ -1,0 +1,94 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Authors from '../../components/Authors.astro';
+import PubLinks from '../../components/PubLinks.astro';
+import { PUB_TYPE_HEADINGS } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const pubs = await getCollection('publications');
+  return pubs.map((pub) => ({ params: { slug: pub.id }, props: { pub } }));
+}
+
+const { pub } = Astro.props;
+const { Content } = await render(pub);
+const hasAbstract = pub.body?.trim().length > 0;
+---
+
+<BaseLayout title={pub.data.title} description={`${pub.data.title} — ${pub.data.venue} (${pub.data.year}).`} article>
+  <article class="container pub-detail">
+    <p class="eyebrow">{PUB_TYPE_HEADINGS[pub.data.type]} · {pub.data.year}</p>
+    <h1>{pub.data.title}</h1>
+    <div class="meta">
+      <Authors authors={pub.data.authors} />
+      <p class="venue">{pub.data.venue}</p>
+      {pub.data.award && <p class="award">★ {pub.data.award}</p>}
+    </div>
+    <div class="actions">
+      <PubLinks links={pub.data.links} />
+    </div>
+
+    {
+      hasAbstract && (
+        <section class="abstract prose">
+          <h2>Abstract</h2>
+          <Content />
+        </section>
+      )
+    }
+
+    <p class="back"><a href="/research">← All publications</a></p>
+  </article>
+</BaseLayout>
+
+<style>
+  .pub-detail {
+    max-width: var(--measure);
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) var(--space-xl);
+  }
+  .pub-detail h1 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: var(--step-2);
+    margin-block: var(--space-2xs) var(--space-s);
+    line-height: 1.25;
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .venue {
+    font-family: var(--font-sans);
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .award {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #9a6b00;
+  }
+  :global(html[data-theme='dark']) .award {
+    color: #e6b450;
+  }
+  .actions {
+    margin-block: var(--space-m);
+  }
+  .abstract {
+    margin-top: var(--space-l);
+  }
+  .abstract h2 {
+    font-size: var(--step-0);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+  }
+  .back {
+    margin-top: var(--space-xl);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+  }
+</style>

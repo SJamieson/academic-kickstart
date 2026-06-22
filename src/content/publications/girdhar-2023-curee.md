@@ -1,0 +1,14 @@
+---
+title: "CUREE: A Curious Underwater Robot for Ecosystem Exploration"
+authors: [Y. Girdhar, N. McGuire, L. Cai, S. Jamieson, S. McCammon, B. Claus, J. E. San Soucie, J. E. Todd, T. A. Mooney]
+venue: 2023 IEEE International Conference on Robotics and Automation (ICRA)
+year: 2023
+date: 2023-05-01
+type: conference
+featured: false
+links:
+  doi: https://doi.org/10.1109/ICRA48891.2023.10161282
+  url: https://ieeexplore.ieee.org/abstract/document/10161282
+---
+
+The current approach to exploring and monitoring complex underwater ecosystems, such as coral reefs, is to conduct surveys using diver-held or static cameras, or deploying sensor buoys. These approaches often fail to capture the full variation and complexity of interactions between different reef organisms and their habitat. The CUREE platform presented in this paper provides a unique set of capabilities in the form of robot behaviors and perception algorithms to enable scientists to explore different aspects of an ecosystem. Examples of these capabilities include low-altitude visual surveys, soundscape surveys, habitat characterization, and animal following. We demonstrate these capabilities by describing two field deployments on coral reefs in the US Virgin Islands. In the first deployment, we show that CUREE can identify the preferred habitat type of snapping shrimp in a reef through a combination of a visual survey, habitat characterization, and a soundscape survey. In the second deployment, we demonstrate CUREE's ability to follow arbitrary animals by separately following a barracuda and stingray for several minutes each in midwater and benthic environments, respectively.

@@ -1,10 +1,18 @@
+# Build output
+dist/
+.output/
+
+# Astro
+.astro/
+
+# Dependencies
+node_modules/
+
+# Logs / env
+npm-debug.log*
+.env
+.env.production
+.DS_Store
+
 # IDEs
 .idea/
-
-# Hugo
-resources/
-public/
-*.lock
-jsconfig.json
-node_modules/
-go.sum

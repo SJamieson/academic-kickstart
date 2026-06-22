@@ -1,0 +1,200 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { TRACKS } from '../../consts';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft || import.meta.env.DEV)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+---
+
+<BaseLayout
+  title="Writing"
+  description="Essays on risk-aware AI by Stewart C. Jamieson — technical deep-dives and AI strategy & systems."
+>
+  <PageHeader eyebrow="Writing" title="Writing">
+    <p>
+      Notes on building reliable AI — split between deeply technical pieces and higher-altitude
+      strategy & systems thinking. Two tracks, one thread: AI that knows its own limits.
+    </p>
+  </PageHeader>
+
+  <div class="container writing-page">
+    {
+      posts.length > 0 ? (
+        <>
+          <div class="filters" role="group" aria-label="Filter by track">
+            <button class="filter active" data-track="all">All</button>
+            <button class="filter" data-track="strategy">{TRACKS.strategy.label}</button>
+            <button class="filter" data-track="technical">{TRACKS.technical.label}</button>
+          </div>
+
+          <ul class="post-list">
+            {posts.map((post) => (
+              <li class="post-card" data-track={post.data.track}>
+                <a class="post-card-link" href={`/writing/${post.id}`}>
+                  <div class="post-card-top">
+                    <span class="post-card-track">{TRACKS[post.data.track].label}</span>
+                    <span class="post-card-date">{fmt(post.data.pubDate)}</span>
+                  </div>
+                  <h2 class="post-card-title">{post.data.title}</h2>
+                  <p class="post-card-desc">{post.data.description}</p>
+                  {post.data.tags.length > 0 && (
+                    <ul class="post-card-tags">
+                      {post.data.tags.map((t) => <li>{t}</li>)}
+                    </ul>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p class="empty">First posts are on the way. In the meantime, see my <a href="/research">research</a> and <a href="/talks">talks</a>.</p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .writing-page {
+    max-width: var(--measure-wide);
+    padding-bottom: var(--space-xl);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-l);
+  }
+  .filter {
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    font-weight: 550;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 99px;
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .filter.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .post-card[hidden] {
+    display: none;
+  }
+  .post-card-link {
+    display: block;
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .post-card-link:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow);
+  }
+  .post-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .post-card-track {
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+  }
+  .post-card-date {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--text-faint);
+  }
+  .post-card-title {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .post-card-link:hover .post-card-title {
+    color: var(--accent);
+  }
+  .post-card-desc {
+    margin-top: 0.3rem;
+    color: var(--text-muted);
+    font-size: var(--step-0);
+  }
+  .post-card-tags {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: var(--space-s);
+  }
+  .post-card-tags li {
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+    border-radius: 99px;
+    padding: 0.1rem 0.55rem;
+  }
+  .empty {
+    color: var(--text-muted);
+    font-size: var(--step-1);
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const cards = document.querySelectorAll<HTMLElement>('.post-card');
+
+  function apply(track: string) {
+    cards.forEach((c) => {
+      c.hidden = track !== 'all' && c.dataset.track !== track;
+    });
+    buttons.forEach((b) => b.classList.toggle('active', b.dataset.track === track));
+  }
+
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      const track = b.dataset.track ?? 'all';
+      apply(track);
+      const url = new URL(location.href);
+      if (track === 'all') url.searchParams.delete('track');
+      else url.searchParams.set('track', track);
+      history.replaceState({}, '', url);
+    }),
+  );
+
+  // Honor ?track= deep links (e.g. from a post's track label).
+  const initial = new URLSearchParams(location.search).get('track');
+  if (initial === 'strategy' || initial === 'technical') apply(initial);
+</script>

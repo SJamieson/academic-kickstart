@@ -1,0 +1,340 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Authors from '../components/Authors.astro';
+import PubLinks from '../components/PubLinks.astro';
+import { THEMIS_URL, TRACKS } from '../consts';
+import { formatMonthYear } from '../lib/format';
+
+const featuredPubs = (await getCollection('publications'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const featuredTalks = (await getCollection('talks'))
+  .filter((t) => t.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const recentPosts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero container">
+    <p class="eyebrow">Head of Technology · Themis AI</p>
+    <h1 class="hero-title">Building AI that knows<br />what it doesn’t know.</h1>
+    <p class="hero-lede">
+      I’m <strong>Stewart Jamieson</strong> — an AI researcher and technical leader working on
+      risk-aware, <em>uncertainty-aware</em> machine learning. I lead technology at
+      <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>, where we make AI
+      systems safer and more reliable by teaching them to recognize the limits of their own knowledge.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="/writing">Read the writing</a>
+      <a class="btn" href="/about">About me</a>
+    </div>
+  </section>
+
+  <!-- Through-line -->
+  <section class="container thread">
+    <p>
+      For a decade I’ve worked on one question from different angles — <strong>how do we build AI
+      systems that understand the limits of their own knowledge?</strong> From uncertainty
+      quantification for self-driving vision, to risk-aware online learning and Bayesian inference
+      for autonomous robots, to commercializing that research as reliable, de-risked AI at Themis AI.
+    </p>
+  </section>
+
+  <!-- Selected research -->
+  <section class="container band">
+    <div class="band-head">
+      <h2>Selected research</h2>
+      <a class="band-more" href="/research">All publications →</a>
+    </div>
+    <ul class="card-list">
+      {
+        featuredPubs.map((pub) => (
+          <li class="card">
+            {pub.data.award && <span class="card-badge">★ {pub.data.award}</span>}
+            <h3 class="card-title">
+              <a href={`/publication/${pub.id}`}>{pub.data.title}</a>
+            </h3>
+            <Authors authors={pub.data.authors} />
+            <p class="card-venue">
+              {pub.data.venue} · {pub.data.year}
+            </p>
+            <PubLinks links={pub.data.links} />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Recent writing (populated once posts exist) -->
+  {
+    recentPosts.length > 0 && (
+      <section class="container band">
+        <div class="band-head">
+          <h2>Recent writing</h2>
+          <a class="band-more" href="/writing">All writing →</a>
+        </div>
+        <ul class="post-list">
+          {recentPosts.map((post) => (
+            <li class="post-row">
+              <a class="post-link" href={`/writing/${post.id}`}>
+                <span class="post-track">{TRACKS[post.data.track].label}</span>
+                <span class="post-title">{post.data.title}</span>
+                <span class="post-desc">{post.data.description}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <!-- Talk highlights -->
+  <section class="container band">
+    <div class="band-head">
+      <h2>Recent talks</h2>
+      <a class="band-more" href="/talks">All talks →</a>
+    </div>
+    <ul class="talk-highlights">
+      {
+        featuredTalks.map((talk) => (
+          <li class="th-row">
+            <span class="th-date">{formatMonthYear(talk.data.date)}</span>
+            <span class="th-body">
+              <span class="th-title">{talk.data.title}</span>
+              <span class="th-event">{talk.data.event} · {talk.data.location}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 9vw, 6rem) var(--space-l);
+    max-width: 52rem;
+  }
+  .hero-title {
+    font-size: var(--step-4);
+    margin-block: var(--space-s);
+    letter-spacing: -0.02em;
+  }
+  .hero-lede {
+    max-width: 38rem;
+    font-size: var(--step-1);
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: var(--space-m);
+  }
+  .btn {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 550;
+    padding: 0.6rem 1.1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #fff;
+  }
+
+  .thread {
+    max-width: 48rem;
+    padding-block: var(--space-m) var(--space-l);
+  }
+  .thread p {
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-m);
+  }
+  .thread strong {
+    color: var(--text);
+  }
+
+  .band {
+    max-width: var(--measure-wide);
+    padding-block: var(--space-l);
+    border-top: 1px solid var(--border);
+  }
+  .band-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: var(--space-m);
+  }
+  .band-head h2 {
+    font-size: var(--step-2);
+  }
+  .band-more {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 550;
+    white-space: nowrap;
+  }
+
+  .card-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: var(--space-m);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: var(--space-m);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+  .card-badge {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 650;
+    color: #9a6b00;
+  }
+  :global(html[data-theme='dark']) .card-badge {
+    color: #e6b450;
+  }
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: var(--step-0);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+  .card-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .card-title a:hover {
+    color: var(--accent);
+  }
+  .card-venue {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .post-row {
+    border-top: 1px solid var(--border);
+  }
+  .post-row:first-child {
+    border-top: none;
+  }
+  .post-link {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: 0.2rem 1.2rem;
+    padding: var(--space-s) 0;
+    text-decoration: none;
+    color: inherit;
+  }
+  .post-link:hover .post-title {
+    color: var(--accent);
+  }
+  .post-track {
+    grid-row: span 2;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding-top: 0.2rem;
+  }
+  .post-title {
+    font-weight: 600;
+  }
+  .post-desc {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .talk-highlights {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .th-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: var(--space-s);
+    padding: var(--space-s) 0;
+    border-top: 1px solid var(--border);
+  }
+  .th-row:first-child {
+    border-top: none;
+  }
+  .th-date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  .th-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .th-title {
+    font-weight: 600;
+  }
+  .th-event {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 34rem) {
+    .post-link {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+    .post-track {
+      grid-row: auto;
+    }
+    .th-row {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

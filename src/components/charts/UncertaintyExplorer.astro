@@ -1,0 +1,182 @@
+---
+// Interactive island: a "selective prediction" demo. A slider sets an uncertainty
+// threshold; predictions above it are abstained. Live readout shows the
+// coverage / selective-accuracy trade-off. Rendered with Observable Plot.
+// Demonstrates the interactive-widget pattern for technical posts.
+interface Props {
+  caption?: string;
+}
+const { caption } = Astro.props;
+---
+
+<figure class="wide uncertainty-explorer" data-uexplorer>
+  <div class="ue-controls">
+    <label class="ue-label">
+      Uncertainty threshold (&tau;): <output class="ue-tau">0.50</output>
+      <input class="ue-slider" type="range" min="0.02" max="1" step="0.02" value="0.5" />
+    </label>
+    <div class="ue-readout">
+      <span class="ue-stat"><strong class="ue-coverage">—</strong><small>answered</small></span>
+      <span class="ue-stat"><strong class="ue-sel-acc">—</strong><small>selective accuracy</small></span>
+      <span class="ue-stat"><strong class="ue-base-acc">—</strong><small>accuracy if you answer everything</small></span>
+    </div>
+  </div>
+  <div class="ue-chart" role="img" aria-label="Predictions plotted by uncertainty, colored by correctness, with an abstention threshold"></div>
+  {caption && <figcaption set:html={caption} />}
+</figure>
+
+<style>
+  .uncertainty-explorer {
+    margin-block: var(--space-l);
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .ue-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: var(--space-s);
+  }
+  .ue-label {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 550;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 16rem;
+    flex: 1;
+  }
+  .ue-tau {
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+  .ue-slider {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+  .ue-readout {
+    display: flex;
+    gap: var(--space-m);
+  }
+  .ue-stat {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+  }
+  .ue-stat strong {
+    font-size: var(--step-1);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .ue-stat small {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+  }
+  .ue-chart {
+    overflow-x: auto;
+  }
+  .ue-chart :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+  figcaption {
+    margin-top: 0.7rem;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+
+<script>
+  import * as Plot from '@observablehq/plot';
+
+  // Deterministic PRNG so the demo looks identical on every load.
+  function mulberry32(seed: number) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  interface Pred {
+    u: number; // model-reported uncertainty in [0,1]
+    y: number; // jitter for plotting
+    correct: boolean;
+  }
+
+  function makeData(n: number): Pred[] {
+    const rnd = mulberry32(42);
+    const data: Pred[] = [];
+    for (let i = 0; i < n; i++) {
+      // Uncertainty skewed toward low values (a decent model).
+      const u = Math.pow(rnd(), 1.7);
+      // Accuracy degrades as uncertainty rises: ~98% at u=0 down to ~45% at u=1.
+      const pCorrect = 0.98 - 0.53 * u;
+      data.push({ u, y: rnd(), correct: rnd() < pCorrect });
+    }
+    return data;
+  }
+
+  function initExplorer(root: HTMLElement) {
+    const data = makeData(240);
+    const chartEl = root.querySelector('.ue-chart') as HTMLElement;
+    const slider = root.querySelector('.ue-slider') as HTMLInputElement;
+    const tauOut = root.querySelector('.ue-tau') as HTMLElement;
+    const covEl = root.querySelector('.ue-coverage') as HTMLElement;
+    const selEl = root.querySelector('.ue-sel-acc') as HTMLElement;
+    const baseEl = root.querySelector('.ue-base-acc') as HTMLElement;
+
+    const baseAcc = data.filter((d) => d.correct).length / data.length;
+    baseEl.textContent = (baseAcc * 100).toFixed(0) + '%';
+
+    const pct = (x: number) => (x * 100).toFixed(0) + '%';
+
+    function render(tau: number) {
+      tauOut.textContent = tau.toFixed(2);
+      const retained = data.filter((d) => d.u <= tau);
+      const coverage = retained.length / data.length;
+      const selAcc = retained.length ? retained.filter((d) => d.correct).length / retained.length : 0;
+      covEl.textContent = pct(coverage);
+      selEl.textContent = retained.length ? pct(selAcc) : '—';
+
+      const plot = Plot.plot({
+        height: 300,
+        marginLeft: 48,
+        x: { domain: [0, 1], label: 'Model-reported uncertainty →', grid: true },
+        y: { axis: null, domain: [0, 1] },
+        color: {
+          domain: ['correct', 'incorrect'],
+          range: ['#0f766e', '#d4694f'],
+          legend: true,
+        },
+        marks: [
+          Plot.dot(data, {
+            x: 'u',
+            y: 'y',
+            r: 3.4,
+            fill: (d: Pred) => (d.correct ? 'correct' : 'incorrect'),
+            fillOpacity: (d: Pred) => (d.u <= tau ? 0.9 : 0.12),
+            stroke: 'var(--surface)',
+            strokeWidth: 0.5,
+          }),
+          Plot.ruleX([tau], { stroke: 'var(--text)', strokeWidth: 1.5, strokeDasharray: '4 3' }),
+        ],
+      });
+      chartEl.replaceChildren(plot);
+    }
+
+    slider.addEventListener('input', () => render(parseFloat(slider.value)));
+    render(parseFloat(slider.value));
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-uexplorer]').forEach(initExplorer);
+</script>

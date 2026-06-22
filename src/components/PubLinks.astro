@@ -1,0 +1,44 @@
+---
+import { displayLinks } from '../lib/format';
+interface Props {
+  links?: Record<string, string | undefined>;
+}
+const items = displayLinks(Astro.props.links);
+---
+
+{
+  items.length > 0 && (
+    <span class="pub-links">
+      {items.map((l) => (
+        <a href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+          {l.label}
+        </a>
+      ))}
+    </span>
+  )
+}
+
+<style>
+  .pub-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .pub-links a {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 550;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.12rem 0.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 99px;
+    line-height: 1.5;
+  }
+  .pub-links a:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+import { SOCIAL, SITE, CV_URL } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-meta">
+      <span class="footer-brand">Stewart C. Jamieson</span>
+      <span class="footer-tagline">{SITE.tagline}</span>
+    </div>
+
+    <nav class="footer-links" aria-label="Social and contact">
+      {SOCIAL.map((s) => (
+        <a href={s.href} rel="me noopener" target={s.href.startsWith('http') ? '_blank' : undefined}>
+          {s.label}
+        </a>
+      ))}
+      <a href={CV_URL} target="_blank" rel="noopener">CV</a>
+    </nav>
+
+    <p class="footer-colophon">
+      © {year} Stewart C. Jamieson · Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--border);
+    background: var(--bg-subtle);
+    padding-block: var(--space-l);
+    font-family: var(--font-sans);
+  }
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .footer-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .footer-brand {
+    font-weight: 650;
+    color: var(--text);
+  }
+  .footer-tagline {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    font-size: var(--step--1);
+  }
+  .footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+  .footer-colophon {
+    color: var(--text-faint);
+    font-size: var(--step--1);
+  }
+  .footer-colophon a {
+    color: var(--text-muted);
+  }
+</style>

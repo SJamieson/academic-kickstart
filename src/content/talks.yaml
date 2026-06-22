@@ -1,0 +1,153 @@
+# Talks & appearances. Source of truth: current CV (curated list), enriched with
+# slides/video/poster assets from prior recordings. Each entry needs a unique `id`.
+
+# ---- Invited & Selected ----------------------------------------------------
+- id: t-challenge-2025
+  title: "Capsa: Making AI Trustworthy"
+  role: Award Winner & Presenter
+  event: T-Challenge Competition (T-Mobile & Deutsche Telekom)
+  location: Bonn, Germany
+  date: 2025-06-01
+  category: selected
+  featured: true
+
+- id: csail-alliances-2025
+  title: Themis AI — Startup Pitch
+  role: Selected Presenter
+  event: CSAIL Alliances Annual Meeting
+  location: Cambridge, MA
+  date: 2025-04-01
+  category: selected
+  featured: true
+
+- id: mit-dts-2024
+  title: Selected Lightning Talk
+  role: Presenter
+  event: MIT Digital Technology & Strategy Conference
+  location: Cambridge, MA
+  date: 2024-09-01
+  category: selected
+
+- id: nccos-2023
+  title: Multi-Robot Reef Monitoring, Mapping & Human-Guided Exploration
+  role: Invited Talk
+  event: NCCOS SfM/AI Working Group
+  location: Online
+  date: 2023-03-01
+  category: selected
+
+- id: icrs-2022
+  title: Rapid, Comprehensive Coral Reef Monitoring with AUVs
+  role: Invited Talk
+  event: 15th International Coral Reef Symposium
+  location: Bremen, Germany
+  date: 2022-07-06
+  category: selected
+  links:
+    url: https://www.icrs2022.de/
+
+- id: whoi-aope-2020
+  title: Human-Robot Cooperation for Exploring Bandwidth-Limited Environments
+  role: Invited Talk
+  event: WHOI AOPE Department Seminar Series
+  location: Woods Hole, MA
+  date: 2020-07-01
+  category: selected
+
+- id: icraxmit-2020
+  title: Active Reward Learning for Co-Robotic Exploration
+  role: Invited Presenter & Panelist
+  event: ICRAxMIT
+  location: Cambridge, MA
+  date: 2020-06-01
+  category: selected
+  links:
+    video: https://www.youtube.com/watch?v=-Z7Bwf08fJE
+
+- id: icra-debates-2019
+  title: Deep Learning in Robotics Research
+  role: Invited Lightning Talk
+  event: Debates on the Future of Robotics Research, ICRA 2019
+  location: Montréal, Canada
+  date: 2019-05-24
+  category: selected
+  links:
+    url: http://www.roboticsdebates.org/2019/index.html
+
+# ---- Industry & Outreach ---------------------------------------------------
+- id: cxo-forum-2025
+  title: AI Trust, Privacy, & Where Do We Go From Here?
+  role: Invited Speaker
+  event: CXO Forum 2025 (CCHL & Digital Health Canada)
+  location: Halifax, NS, Canada
+  date: 2025-10-01
+  category: industry
+  featured: true
+
+- id: ai4-2024
+  title: "Capsa: Making AI Trustworthy"
+  role: Speaker (Industry Presentation)
+  event: Ai4 Conference
+  location: Las Vegas, NV
+  date: 2024-08-01
+  category: industry
+  featured: true
+
+- id: ocean-encounters-2023
+  title: "ROBOTS: How New Technologies Are Advancing Ocean Research"
+  role: Invited Presenter
+  event: WHOI Ocean Encounters (Season 5, Episode 4)
+  location: Online
+  date: 2023-05-24
+  category: industry
+  links:
+    video: https://www.youtube.com/watch?v=iFrY2NuyIak
+    url: https://www.whoi.edu/ocean-encounter/robots/
+
+- id: mit-adaptive-sampling-2019
+  title: Multi-Robot Adaptive Sampling
+  role: Co-Lecturer
+  event: MIT 16.412 Advanced Lecture Series
+  location: Cambridge, MA
+  date: 2019-04-10
+  category: industry
+  links:
+    slides: /files/Multi_Agent_Adaptive_Sampling.pdf
+    video: https://www.youtube.com/watch?v=HFtw-Jkadd0
+
+- id: zebra-lunch-learn-2017
+  title: Introduction to Neural Networks and Machine Learning
+  role: Lead Presenter (Internal Seminar)
+  event: Zebra Technologies "Lunch & Learn" (200+ attendees)
+  location: Mississauga, ON, Canada
+  date: 2017-01-01
+  category: industry
+
+# ---- Posters & Other -------------------------------------------------------
+- id: spacechi-2021
+  title: Communication for Human–Multi-Robot Collaboration
+  role: Poster Presentation
+  event: SpaceCHI Workshop @ CHI 2021
+  location: Online
+  date: 2021-05-14
+  category: poster
+  links:
+    pdf: /files/SpaceCHI_Position_Paper.pdf
+    poster: /files/SpaceCHI_Poster.jpg
+    url: https://spacechi.media.mit.edu/
+
+- id: uoft-debate-2015
+  title: Should Robots Have Rights?
+  role: Co-Presenter
+  event: University of Toronto Debate
+  location: Toronto, ON, Canada
+  date: 2015-12-01
+  category: poster
+
+- id: praxis-2014
+  title: A Customized Graphical Checklist for Efficient Ambulance Inventory
+  role: Co-Presenter
+  event: Praxis II Showcase, University of Toronto
+  location: Toronto, ON, Canada
+  date: 2014-04-01
+  category: poster
