@@ -1,0 +1,201 @@
+---
+// Animated Galton board behind the hero: balls drop through a peg lattice and
+// accumulate into a histogram that converges to the overlaid Gaussian — the
+// canonical "randomness sums to a normal distribution" demo. On-brand for
+// uncertainty-aware AI, distinct from a node-graph motif, confined to the right
+// and masked away from the headline, and reduced-motion aware.
+---
+
+<canvas class="hero-backdrop" aria-hidden="true"></canvas>
+
+<style>
+  .hero-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(95deg, transparent 0%, transparent 36%, #000 72%);
+    mask-image: linear-gradient(95deg, transparent 0%, transparent 36%, #000 72%);
+  }
+</style>
+
+<script>
+  function initBackdrop(canvas: HTMLCanvasElement) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const accent = () =>
+      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0f766e';
+    const rgba = (hex: string, a: number) => {
+      const m = hex.replace('#', '');
+      const n = m.length === 3 ? m.split('').map((c) => c + c).join('') : m;
+      return `rgba(${parseInt(n.slice(0, 2), 16) || 15},${parseInt(n.slice(2, 4), 16) || 118},${parseInt(n.slice(4, 6), 16) || 110},${a})`;
+    };
+
+    const ROWS = 10;
+    const NBINS = ROWS + 1;
+    const CENTER = ROWS / 2;
+
+    let w = 0, h = 0;
+    let cx = 0, binW = 0, pegTop = 0, rowGap = 0, barBaseY = 0, barMaxH = 0, spawnY = 0, ballR = 4, fall = 6;
+    let bins = new Array(NBINS).fill(0);
+    let dropped = 0;
+
+    interface Ball { x: number; tx: number; y: number; row: number; }
+    let balls: Ball[] = [];
+
+    function geom() {
+      const bx0 = w * 0.5, bx1 = w * 0.93;
+      cx = (bx0 + bx1) / 2;
+      binW = (bx1 - bx0) / NBINS;
+      pegTop = h * 0.17;
+      rowGap = h * 0.04;
+      const pegBottom = pegTop + ROWS * rowGap;
+      barBaseY = h * 0.9;
+      barMaxH = Math.max(40, barBaseY - (pegBottom + h * 0.04));
+      spawnY = pegTop - h * 0.06;
+      ballR = Math.max(3, Math.min(5, w * 0.0042));
+      fall = Math.max(3.5, h * 0.012);
+    }
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width; h = rect.height;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      geom();
+    }
+
+    function spawn() {
+      if (balls.length < 7) balls.push({ x: cx, tx: cx, y: spawnY, row: 0 });
+    }
+
+    function update() {
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        b.y += fall;
+        b.x += (b.tx - b.x) * 0.25;
+        const rowY = pegTop + b.row * rowGap;
+        if (b.row < ROWS && b.y >= rowY) {
+          b.tx += (Math.random() < 0.5 ? -1 : 1) * (binW / 2);
+          b.row++;
+        }
+        if (b.row >= ROWS && b.y >= barBaseY) {
+          const bucket = Math.max(0, Math.min(NBINS - 1, CENTER + Math.round((b.tx - cx) / binW)));
+          bins[bucket] += 1;
+          dropped++;
+          balls.splice(i, 1);
+        }
+      }
+    }
+
+    function draw() {
+      const color = accent();
+      ctx.clearRect(0, 0, w, h);
+
+      // pegs
+      ctx.fillStyle = rgba(color, 0.32);
+      for (let r = 1; r < ROWS; r++) {
+        for (let i = 0; i <= r; i++) {
+          ctx.beginPath();
+          ctx.arc(cx + (i - r / 2) * binW, pegTop + r * rowGap, 1.7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // histogram bars (auto-scaled so the tallest fills barMaxH)
+      const max = Math.max(1e-6, ...bins);
+      for (let bI = 0; bI < NBINS; bI++) {
+        const hh = barMaxH * (bins[bI] / max);
+        if (hh < 0.5) continue;
+        const x = cx + (bI - CENTER) * binW - binW * 0.42;
+        ctx.fillStyle = rgba(color, 0.26);
+        ctx.fillRect(x, barBaseY - hh, binW * 0.84, hh);
+      }
+
+      // theoretical Gaussian overlay
+      const sigma = Math.sqrt(ROWS * 0.25);
+      ctx.beginPath();
+      for (let t = -CENTER - 0.6; t <= CENTER + 0.6; t += 0.15) {
+        const ev = Math.exp(-(t * t) / (2 * sigma * sigma));
+        const x = cx + t * binW, y = barBaseY - barMaxH * ev;
+        t === -CENTER - 0.6 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = rgba(color, 0.5);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      // falling balls
+      ctx.fillStyle = rgba(color, 0.85);
+      for (const b of balls) {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, ballR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // faint readout: sample count + goodness-of-fit to the normal curve
+      let sum = 0;
+      for (const v of bins) sum += v;
+      let fit = 0;
+      if (sum > 0) {
+        let qsum = 0;
+        const q = bins.map((_, i) => {
+          const t = i - CENTER;
+          const e = Math.exp(-(t * t) / (2 * sigma * sigma));
+          qsum += e;
+          return e;
+        });
+        let tvd = 0;
+        for (let i = 0; i < NBINS; i++) tvd += Math.abs(bins[i] / sum - q[i] / qsum);
+        fit = Math.max(0, Math.round((1 - tvd / 2) * 100));
+      }
+      ctx.font = '600 12px ui-monospace, "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = rgba(color, 0.5);
+      ctx.fillText(
+        `n = ${dropped.toLocaleString()}   ·   fit to normal  ${fit}%`,
+        cx,
+        barBaseY + Math.min(30, h * 0.06),
+      );
+      ctx.textAlign = 'start';
+    }
+
+    let raf = 0, frame = 0;
+    function loop() {
+      frame++;
+      if (frame % 26 === 0) spawn();
+      update();
+      draw();
+      raf = requestAnimationFrame(loop);
+    }
+
+    resize();
+    let rt: number;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = window.setTimeout(() => { resize(); if (reduce) drawStatic(); }, 150);
+    });
+
+    function drawStatic() {
+      const sigma = Math.sqrt(ROWS * 0.25);
+      let s = 0;
+      for (let i = 0; i < NBINS; i++) {
+        const t = i - CENTER;
+        bins[i] = Math.exp(-(t * t) / (2 * sigma * sigma));
+        s += bins[i];
+      }
+      dropped = Math.round(s * 80); // representative count for the static readout
+      draw();
+    }
+
+    if (reduce) drawStatic();
+    else raf = requestAnimationFrame(loop);
+  }
+
+  document.querySelectorAll<HTMLCanvasElement>('.hero-backdrop').forEach(initBackdrop);
+</script>

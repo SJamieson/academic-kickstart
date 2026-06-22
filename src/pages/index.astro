@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroBackdrop from '../components/HeroBackdrop.astro';
 import Authors from '../components/Authors.astro';
 import PubLinks from '../components/PubLinks.astro';
 import { THEMIS_URL, TRACKS } from '../consts';
@@ -18,22 +19,49 @@ const recentPosts = (await getCollection('posts'))
   .filter((p) => !p.data.draft)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 3);
+
+const facts = [
+  'MIT Ph.D.',
+  'Best Paper · ICRA 2020',
+  '10+ papers · AI & robotics',
+  'Reviewer · NeurIPS / ICML / ICLR',
+];
 ---
 
 <BaseLayout>
   <!-- Hero -->
-  <section class="hero container">
-    <p class="eyebrow">Head of Technology · Themis AI</p>
-    <h1 class="hero-title">Building AI that knows<br />what it doesn’t know.</h1>
-    <p class="hero-lede">
-      I’m <strong>Stewart Jamieson</strong> — an AI researcher and technical leader working on
-      risk-aware, <em>uncertainty-aware</em> machine learning. I lead technology at
-      <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>, where we make AI
-      systems safer and more reliable by teaching them to recognize the limits of their own knowledge.
-    </p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="/writing">Read the writing</a>
-      <a class="btn" href="/about">About me</a>
+  <section class="hero">
+    <HeroBackdrop />
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">Head of Technology · Themis AI</p>
+        <h1 class="hero-title">Building AI that knows<br />what it doesn’t know.</h1>
+        <p class="hero-lede">
+          I’m <strong>Stewart Jamieson</strong> — an AI researcher and roboticist working on
+          risk-aware, <em>uncertainty-aware</em> machine learning. I lead technology at{' '}
+          <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>, making AI systems
+          safer and more reliable by teaching them to recognize the limits of their own knowledge.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/writing">Read the writing</a>
+          <a class="btn" href="/about">About me</a>
+        </div>
+        <ul class="hero-facts">
+          {facts.map((f) => <li>{f}</li>)}
+        </ul>
+      </div>
+
+      <div class="hero-portrait">
+        <img
+          src="/images/avatar.webp"
+          alt="Stewart C. Jamieson"
+          width="280"
+          height="280"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
     </div>
   </section>
 
@@ -119,8 +147,18 @@ const recentPosts = (await getCollection('posts'))
 
 <style>
   .hero {
-    padding-block: clamp(3rem, 9vw, 6rem) var(--space-l);
-    max-width: 52rem;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    align-items: center;
+    gap: var(--space-l);
+    padding-block: clamp(2.5rem, 7vw, 5rem);
   }
   .hero-title {
     font-size: var(--step-4);
@@ -128,13 +166,13 @@ const recentPosts = (await getCollection('posts'))
     letter-spacing: -0.02em;
   }
   .hero-lede {
-    max-width: 38rem;
+    max-width: 40rem;
     font-size: var(--step-1);
   }
   .hero-cta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.7rem;
     margin-block-start: var(--space-m);
   }
   .btn {
@@ -147,6 +185,7 @@ const recentPosts = (await getCollection('posts'))
     color: var(--text);
     text-decoration: none;
     transition: all 0.15s ease;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
   }
   .btn:hover {
     border-color: var(--accent);
@@ -163,10 +202,57 @@ const recentPosts = (await getCollection('posts'))
     border-color: var(--accent-hover);
     color: #fff;
   }
+  .hero-facts {
+    list-style: none;
+    padding: 0;
+    margin-block-start: var(--space-m);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .hero-facts li {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 0.18rem 0.7rem;
+  }
+  .hero-portrait {
+    justify-self: start;
+  }
+  .hero-portrait img {
+    width: clamp(180px, 22vw, 280px);
+    height: clamp(180px, 22vw, 280px);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--surface);
+    box-shadow: 0 0 0 1.5px var(--accent), var(--shadow);
+    transition: opacity 0.35s ease;
+  }
+  /* Fade on hover to reveal the Galton board behind the portrait. */
+  .hero-portrait img:hover {
+    opacity: 0.12;
+  }
+  @media (max-width: 52rem) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+    .hero-portrait {
+      order: -1;
+      justify-self: start;
+    }
+    .hero-portrait img {
+      width: 132px;
+      height: 132px;
+    }
+  }
 
   .thread {
     max-width: 48rem;
-    padding-block: var(--space-m) var(--space-l);
+    padding-block: var(--space-l);
   }
   .thread p {
     font-size: var(--step-1);

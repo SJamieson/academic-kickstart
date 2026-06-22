@@ -1,29 +1,29 @@
 ---
-// Margin sidenote. Sits in the right margin on wide screens; collapses to an
-// inline note block on narrower viewports. Pass an optional number `n`.
+// Margin sidenote. Shows a small in-text reference marker that is always visible,
+// plus the note itself: floated into the right margin on wide screens, or an
+// inline indented note on narrower viewports. Uses <span> (not <aside>) so the
+// markup stays valid inside a Markdown paragraph.
 interface Props {
   n?: number | string;
 }
 const { n } = Astro.props;
 ---
 
-<span class="sidenote-wrap">
-  {n != null && <sup class="sidenote-ref">{n}</sup>}
-  <aside class="sidenote">
-    {n != null && <sup class="sidenote-num">{n}</sup>}
-    <slot />
-  </aside>
-</span>
+<span class="sidenote-wrap"
+  ><sup class="sidenote-ref">{n ?? '※'}</sup
+  ><span class="sidenote"
+    >{n != null && <sup class="sidenote-num">{n}</sup>}<slot /></span
+  ></span
+>
 
 <style>
-  .sidenote-wrap {
-    /* keeps the marker tight to surrounding text */
-  }
   .sidenote-ref {
     color: var(--accent);
     font-family: var(--font-sans);
     font-weight: 600;
+    font-size: 0.72em;
     cursor: default;
+    margin-inline-start: 0.1em;
   }
   .sidenote {
     display: block;
@@ -40,19 +40,16 @@ const { n } = Astro.props;
     font-weight: 600;
     margin-inline-end: 0.3em;
   }
-  /* On wide screens, float the note into the right margin alongside the text. */
-  @media (min-width: 82rem) {
+  /* On wide screens, float the note into the right margin beside the text. */
+  @media (min-width: 88rem) {
     .sidenote {
       float: right;
       clear: right;
       width: 13.5rem;
-      margin-inline-end: -15.5rem;
-      margin-block: 0.25rem;
+      margin-block: 0.15rem;
+      margin-inline-end: -15.75rem;
       padding-inline-start: 0;
       border-inline-start: none;
-    }
-    .sidenote-ref {
-      display: none;
     }
   }
 </style>
