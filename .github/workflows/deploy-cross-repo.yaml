@@ -1,0 +1,117 @@
+# Build this source repo and cross-push the rendered site to the USER pages repo
+# SJamieson/SJamieson.github.io (served at https://www.stewartjamieson.com/ via CNAME).
+#
+# This REPLACES the old manual "build locally + push the public/ submodule" deploy.
+# It is intentionally pinned to the exact toolchain that was verified (2026-06-22) to
+# reproduce the currently-deployed site byte-for-byte (modulo build date / ©year /
+# notebook responsive-webp re-encoding / Plotly random chart ids). See the parity report.
+#
+# SAFE TO LAND ON master: the deploy step needs the `ACTIONS_DEPLOY_KEY` secret (an SSH
+# private key whose public half is a write Deploy Key on the pages repo). It ALSO requires,
+# for push events, the repo variable `AUTO_DEPLOY == 'true'`. So:
+#   * pushes to master build-only until you set AUTO_DEPLOY=true;
+#   * `workflow_dispatch` with dry_run=true  -> build-only smoke test;
+#   * `workflow_dispatch` with dry_run=false -> deploys now (key permitting).
+# Recommended first-run order: push -> dispatch(dry_run=true) -> dispatch(dry_run=false)
+# -> set AUTO_DEPLOY=true for hands-off deploys thereafter.
+
+name: Deploy site to SJamieson.github.io
+
+on:
+  push:
+    branches: ["master"]      # source repo default branch
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build only, do NOT deploy (smoke test before the deploy key exists)"
+        type: boolean
+        default: false
+
+# Pinned tool versions — never use `latest`. These reproduce the live build.
+env:
+  HUGO_VERSION: "0.119.0"                                   # extended; matches netlify.toml + live site
+  GO_VERSION: "1.21.5"                                      # required by Hugo Modules
+  HUGO_ACADEMIC_THEME_REF: "ec0b4bda665bb94149d87ccc3307033b5b3b5fd4"  # SJamieson/hugo-academic submodule commit
+  HUGO_ENVIRONMENT: production
+  HUGO_ENV: production
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Lets the deploy step self-skip until the secret is configured, so this workflow
+      # can sit on master and build cleanly without a failing deploy.
+      HAS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY != '' }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          # fetch full history in case any page uses .Lastmod/.GitInfo.
+          # (Effective config sets enableGitInfo=false, so this is belt-and-suspenders.)
+          fetch-depth: 0
+          # NOTE: submodules are intentionally NOT fetched here. The repo's gitlinks are
+          # broken (.gitmodules absent from HEAD; `public` + `themes/astatine` are orphaned/
+          # private). The one theme we actually need (themes/academic) is cloned explicitly
+          # below at a pinned commit, so the build does not depend on the broken submodule state.
+
+      - name: Set up Go (for Hugo Modules)
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a  # v5.2.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false   # no go.sum is committed; Hugo manages the module download itself
+
+      - name: Set up Hugo (extended, pinned)
+        uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78  # v3.2.1
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Mount themes/academic (legacy widgets + alert shortcode)
+        run: |
+          set -euo pipefail
+          rm -rf themes/academic
+          git clone --quiet https://github.com/SJamieson/hugo-academic.git themes/academic
+          git -C themes/academic checkout --quiet "${HUGO_ACADEMIC_THEME_REF}"
+          rm -rf themes/academic/.git
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          # IMPORTANT: do NOT run `hugo mod get` — bare `hugo mod get` upgrades the pinned
+          # modules (5.9.6 -> 5.9.7) and changes the output. Hugo resolves the pinned
+          # versions straight from the committed go.mod during the build.
+          #
+          hugo --gc --minify
+
+      - name: Deploy to SJamieson.github.io (cross-repo)
+        # Deploys when the key exists AND either:
+        #   - a manual run (workflow_dispatch) that isn't a dry_run, or
+        #   - a push to master while the repo variable AUTO_DEPLOY == 'true'.
+        # So pushes are build-only until you opt in by setting the AUTO_DEPLOY variable,
+        # which lets you do a controlled manual deploy first.
+        if: >-
+          env.HAS_DEPLOY_KEY == 'true' &&
+          (
+            (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run != 'true') ||
+            (github.event_name == 'push' && vars.AUTO_DEPLOY == 'true')
+          )
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e  # v4.0.0
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: SJamieson/SJamieson.github.io
+          publish_branch: master           # the pages repo's GitHub Pages branch
+          publish_dir: ./public
+          cname: www.stewartjamieson.com    # preserve the custom domain (build does not emit CNAME)
+          # keep_files: false (default) => the pages branch becomes EXACTLY ./public, so the
+          # ~308 stale pre-migration files currently committed there will be REMOVED on the
+          # first run (see parity report). Set keep_files: true to retain them instead.
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_message: "Deploy ${{ github.sha }} from academic-kickstart"
