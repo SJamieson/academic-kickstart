@@ -1,8 +1,9 @@
 ---
-// "Building Reliable Systems…" — a confident 3-stage pipeline vs. one whose stages
-// flag low confidence so the system can escalate. One slider (input difficulty)
-// sweeps the regime: the uncertainty-aware system is never worse, and pulls ahead
-// as inputs get harder. Deterministic synthetic model with correlated errors.
+// "Building Reliable Systems…" — selective-prediction view. A 3-stage pipeline
+// produces an answer plus a composed confidence per input. Hovering sweeps the
+// escalation budget (% handed to human review). Escalating the LEAST-confident
+// first (uses the uncertainty signal) recovers reliability far faster than
+// escalating at random (no signal) — that gap is the value of uncertainty.
 interface Props {
   caption?: string;
 }
@@ -10,41 +11,40 @@ const { caption } = Astro.props;
 ---
 
 <figure class="wide chart pipeline" data-pipeline>
+  <p class="head">Hand off <output class="o-rate">20%</output> of inputs to human review:</p>
   <div class="systems">
-    <div class="sys sys-bare"><strong class="o-conf">—</strong><span>Confident system<br/><small>serves every answer</small></span></div>
-    <div class="sys sys-aware"><strong class="o-aware">—</strong><span>Uncertainty-aware system<br/><small>escalates when unsure</small></span></div>
-    <div class="gain"><strong class="o-gain">—</strong><span>more reliable<br/><small class="o-esc">—</small></span></div>
+    <div class="sys sys-aware"><strong class="o-sel">—</strong><span>uncertainty-aware<br/><small>escalate the least-confident first</small></span></div>
+    <div class="sys sys-blind"><strong class="o-ran">—</strong><span>blind<br/><small>escalate at random</small></span></div>
+    <div class="gain"><strong class="o-gain">—</strong><span>worth of the<br/>uncertainty signal</span></div>
   </div>
 
-  <canvas class="plot" role="img" aria-label="End-to-end reliability vs input difficulty for a confident system and an uncertainty-aware system"></canvas>
-
-  <label class="diff">Input difficulty&nbsp; <span class="d-easy">easy</span>
-    <input class="s-diff" type="range" min="0" max="60" step="1" value="24" />
-    <span class="d-hard">hard</span></label>
+  <canvas class="plot" role="img"
+    aria-label="End-to-end reliability vs escalation budget, escalating least-confident-first vs at random"></canvas>
+  <p class="hint">hover the chart to change the escalation budget · x: % escalated · y: end-to-end reliability</p>
   {caption && <figcaption set:html={caption} />}
 </figure>
 
 <style>
   .pipeline { margin-block: var(--space-l); padding: var(--space-m); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); font-family: var(--font-sans); }
+  .head { font-size: var(--step--1); color: var(--text-muted); margin-bottom: var(--space-xs); }
+  .head output { font-family: var(--font-mono); font-weight: 600; color: var(--text); }
   .systems { display: flex; flex-wrap: wrap; gap: var(--space-m); margin-bottom: var(--space-s); }
   .sys { flex: 1 1 9rem; display: flex; align-items: baseline; gap: 0.5rem; }
   .sys strong { font-size: var(--step-2); font-variant-numeric: tabular-nums; line-height: 1; }
   .sys span { font-size: 0.78rem; color: var(--text-muted); }
   .sys small { color: var(--text-faint); }
-  .sys-bare strong { color: #8c8780; }
   .sys-aware strong { color: var(--accent); }
+  .sys-blind strong { color: #8c8780; }
   .gain { flex: 1 1 7rem; display: flex; align-items: baseline; gap: 0.5rem; padding-left: var(--space-s); border-left: 1px solid var(--border); }
   .gain strong { font-size: var(--step-2); font-variant-numeric: tabular-nums; color: var(--accent); }
   .gain span { font-size: 0.78rem; color: var(--text-muted); }
-  .plot { width: 100%; height: auto; aspect-ratio: 5 / 2; }
-  .diff { display: flex; align-items: center; gap: 0.6rem; font-size: var(--step--1); font-weight: 550; margin-top: var(--space-xs); }
-  .diff input { accent-color: var(--accent); flex: 1; }
-  .d-easy, .d-hard { color: var(--text-muted); font-weight: 500; }
+  .plot { width: 100%; height: auto; aspect-ratio: 5 / 2; cursor: crosshair; touch-action: none; }
+  .hint { font-size: 0.72rem; color: var(--text-faint); text-align: center; margin-top: 0.3rem; }
   figcaption { margin-top: 0.7rem; font-size: var(--step--1); color: var(--text-muted); text-align: center; }
 </style>
 
 <script>
-  const N = 4000, ACC = [0.95, 0.94, 0.96], BETA = 0.5, SHIFT = 0.18, T = 0.4, STEPS = 60;
+  const N = 5000, ACC = [0.95, 0.94, 0.96], BETA = 0.5, G = 0.45, RMAX = 0.6;
   const TEAL = '#0f766e', GREY = '#8c8780';
 
   function mulberry32(seed: number) {
@@ -56,39 +56,36 @@ const { caption } = Astro.props;
     };
   }
   const rnd = mulberry32(11);
-  const D: number[] = [], U: number[][] = [[], [], []];
-  for (let i = 0; i < N; i++) { D.push(rnd()); for (let k = 0; k < 3; k++) U[k].push(rnd()); }
   const clamp = (x: number) => Math.max(0.02, Math.min(0.999, x));
-
-  // reliability of both systems at difficulty g in [0,1]
-  function reliab(g: number) {
-    let conf = 0, aware = 0, esc = 0;
-    for (let i = 0; i < N; i++) {
-      const d = D[i];
-      let cc = 1, allOk = true;
-      for (let k = 0; k < 3; k++) {
-        const q = clamp(ACC[k] - SHIFT * g - BETA * (d - 0.5));
-        cc *= q;                          // composed chain-confidence
-        if (U[k][i] >= q) allOk = false;  // this stage served a wrong answer
-      }
-      if (allOk) conf++;
-      if (cc < T) { esc++; aware++; }      // genuinely uncertain → escalate (handled)
-      else if (allOk) aware++;             // confident enough → serve
+  // Each input: composed chain-confidence cc and whether the bare pipeline serves it correctly.
+  const items: { cc: number; ok: number }[] = [];
+  for (let i = 0; i < N; i++) {
+    const d = rnd();
+    let cc = 1, allOk = true;
+    for (let k = 0; k < 3; k++) {
+      const q = clamp(ACC[k] - BETA * (d - 0.5) - 0.18 * G);
+      cc *= q;
+      if (rnd() >= q) allOk = false;
     }
-    return { conf: conf / N, aware: aware / N, esc: esc / N };
+    items.push({ cc, ok: allOk ? 1 : 0 });
   }
-
-  // precompute curves once
-  const curve = Array.from({ length: STEPS + 1 }, (_, i) => reliab(i / STEPS));
+  items.sort((a, b) => a.cc - b.cc); // least confident first
+  const total = items.reduce((s, x) => s + x.ok, 0), base = total / N;
+  const cumOk = [0];
+  for (let m = 0; m < N; m++) cumOk.push(cumOk[m] + items[m].ok);
+  // escalate the lowest-confidence r-fraction → handled correctly; serve the rest
+  const selective = (r: number) => { const m = Math.round(r * N); return (m + total - cumOk[m]) / N; };
+  const random = (r: number) => base + r * (1 - base);
 
   function init(root: HTMLElement) {
     const $ = (s: string) => root.querySelector(s) as HTMLElement;
     const canvas = root.querySelector('.plot') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d')!;
-    const sDiff = $('.s-diff') as HTMLInputElement;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let W = 0, H = 0;
-    const ML = 38, MR = 10, MT = 12, MB = 22;
+    let W = 0, H = 0, rCur = 0.2;
+    const ML = 38, MR = 12, MT = 12, MB = 26, DEF = 0.2, STEPS = 80;
+    const X = (r: number) => ML + (r / RMAX) * (W - ML - MR);
+    const Y = (v: number) => MT + (1 - v) * (H - MT - MB);
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -97,48 +94,49 @@ const { caption } = Astro.props;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       render();
     }
-    const X = (g: number) => ML + g * (W - ML - MR);
-    const Y = (r: number) => MT + (1 - r) * (H - MT - MB);
-
-    function line(sel: (c: { conf: number; aware: number; esc: number }) => number) {
+    function curve(f: (r: number) => number) {
       ctx.beginPath();
-      curve.forEach((c, i) => { const x = X(i / STEPS), y = Y(sel(c)); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      for (let i = 0; i <= STEPS; i++) { const r = (i / STEPS) * RMAX, x = X(r), y = Y(f(r)); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
     }
 
     function render() {
-      const idx = +sDiff.value, cur = curve[idx];
       ctx.clearRect(0, 0, W, H);
-      // y gridlines
       ctx.font = '10px ui-sans-serif, sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      for (let r = 0; r <= 1; r += 0.25) {
-        const y = Y(r);
+      for (let v = 0; v <= 1; v += 0.25) {
+        const y = Y(v);
         ctx.strokeStyle = 'rgba(128,128,128,0.18)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(ML, y); ctx.lineTo(W - MR, y); ctx.stroke();
-        ctx.fillStyle = 'rgba(128,128,128,0.8)'; ctx.fillText((r * 100).toFixed(0) + '%', ML - 5, y);
+        ctx.fillStyle = 'rgba(128,128,128,0.8)'; ctx.fillText((v * 100).toFixed(0) + '%', ML - 5, y);
       }
-      // shaded gap (the uncertainty dividend)
-      line((c) => c.aware);
-      for (let i = STEPS; i >= 0; i--) ctx.lineTo(X(i / STEPS), Y(curve[i].conf));
-      ctx.closePath(); ctx.fillStyle = 'rgba(15,118,110,0.12)'; ctx.fill();
-      // lines
-      line((c) => c.conf); ctx.strokeStyle = GREY; ctx.lineWidth = 2; ctx.stroke();
-      line((c) => c.aware); ctx.strokeStyle = TEAL; ctx.lineWidth = 2.5; ctx.stroke();
-      // marker
-      const mx = X(idx / STEPS);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      for (let r = 0; r <= RMAX + 1e-9; r += 0.2) ctx.fillText((r * 100).toFixed(0) + '%', X(r), H - MB + 6);
+
+      curve(selective);
+      for (let i = STEPS; i >= 0; i--) { const r = (i / STEPS) * RMAX; ctx.lineTo(X(r), Y(random(r))); }
+      ctx.closePath(); ctx.fillStyle = 'rgba(15,118,110,0.13)'; ctx.fill();
+      curve(random); ctx.strokeStyle = GREY; ctx.lineWidth = 2; ctx.stroke();
+      curve(selective); ctx.strokeStyle = TEAL; ctx.lineWidth = 2.5; ctx.stroke();
+
+      const mx = X(rCur);
       ctx.strokeStyle = 'rgba(128,128,128,0.5)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
       ctx.beginPath(); ctx.moveTo(mx, MT); ctx.lineTo(mx, H - MB); ctx.stroke(); ctx.setLineDash([]);
-      for (const [r, col] of [[cur.conf, GREY], [cur.aware, TEAL]] as [number, string][]) {
-        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(mx, Y(r), 4, 0, 7); ctx.fill();
-        ctx.strokeStyle = 'var(--surface)'; ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff'; ctx.stroke();
+      for (const [v, col] of [[random(rCur), GREY], [selective(rCur), TEAL]] as [number, string][]) {
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(mx, Y(v), 4, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
       }
 
-      $('.o-conf').textContent = (cur.conf * 100).toFixed(0) + '%';
-      $('.o-aware').textContent = (cur.aware * 100).toFixed(0) + '%';
-      $('.o-gain').textContent = '+' + ((cur.aware - cur.conf) * 100).toFixed(0) + 'pts';
-      $('.o-esc').textContent = 'hands ' + (cur.esc * 100).toFixed(0) + '% to review';
+      $('.o-rate').textContent = (rCur * 100).toFixed(0) + '%';
+      $('.o-sel').textContent = (selective(rCur) * 100).toFixed(0) + '%';
+      $('.o-ran').textContent = (random(rCur) * 100).toFixed(0) + '%';
+      $('.o-gain').textContent = '+' + ((selective(rCur) - random(rCur)) * 100).toFixed(0) + 'pts';
     }
 
-    sDiff.addEventListener('input', render);
+    canvas.addEventListener('pointermove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      rCur = Math.max(0, Math.min(1, (e.clientX - rect.left - ML) / (rect.width - ML - MR))) * RMAX;
+      render();
+    });
+    canvas.addEventListener('pointerleave', () => { rCur = DEF; render(); });
     let rt: number;
     window.addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(resize, 150); });
     resize();
