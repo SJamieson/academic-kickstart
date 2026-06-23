@@ -1,0 +1,321 @@
+/* ============================================================================
+   Design system — stewartjamieson.com
+   Editorial × technical: serif reading body (Newsreader), sans UI (Inter),
+   mono code (JetBrains Mono). Warm-paper light theme + cool dark theme.
+   ========================================================================== */
+
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/newsreader/wght-italic.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* ---- Design tokens -------------------------------------------------------- */
+:root {
+  /* Type families */
+  --font-serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fluid type scale */
+  --step--1: clamp(0.83rem, 0.8rem + 0.16vw, 0.92rem);
+  --step-0: clamp(1.06rem, 1rem + 0.28vw, 1.2rem);
+  --step-1: clamp(1.27rem, 1.18rem + 0.45vw, 1.55rem);
+  --step-2: clamp(1.52rem, 1.38rem + 0.7vw, 2rem);
+  --step-3: clamp(1.83rem, 1.6rem + 1.12vw, 2.6rem);
+  --step-4: clamp(2.2rem, 1.85rem + 1.7vw, 3.35rem);
+
+  /* Spacing scale */
+  --space-2xs: 0.375rem;
+  --space-xs: 0.625rem;
+  --space-s: 1rem;
+  --space-m: 1.6rem;
+  --space-l: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+
+  /* Layout widths */
+  --measure: 42rem;        /* ~680px reading column */
+  --measure-wide: 64rem;   /* figures / charts can break out to here */
+  --measure-full: 78rem;   /* page chrome max */
+
+  --radius: 7px;
+  --radius-lg: 14px;
+
+  /* Light theme (warm paper) */
+  --bg: #fcfbf8;
+  --bg-subtle: #f3efe7;
+  --surface: #ffffff;
+  --text: #1d1c1a;
+  --text-muted: #6c6860;
+  --text-faint: #97928a;
+  --border: #e7e1d5;
+  --border-strong: #d6cfc0;
+  --accent: #0f766e;
+  --accent-hover: #0c5e57;
+  --accent-subtle: #e3f1ef;
+  --code-bg: #f6f3ec;
+  --code-inline-bg: #efece3;
+  --mark: #fbe6a2;
+  --shadow: 0 1px 2px rgba(40, 35, 25, 0.04), 0 6px 22px rgba(40, 35, 25, 0.06);
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  --bg: #16171b;
+  --bg-subtle: #1d1f24;
+  --surface: #1f2127;
+  --text: #e9e7e2;
+  --text-muted: #a4a199;
+  --text-faint: #76736c;
+  --border: #2c2e35;
+  --border-strong: #3a3d45;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-subtle: #102f2c;
+  --code-bg: #1b1d23;
+  --code-inline-bg: #24262d;
+  --mark: #5b5320;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+/* ---- Reset / base --------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: var(--font-serif);
+  font-size: var(--step-0);
+  line-height: 1.68;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- Headings & text ------------------------------------------------------ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  font-weight: 650;
+  line-height: 1.18;
+  letter-spacing: -0.011em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+h4 { font-size: var(--step-0); }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+strong { font-weight: 650; }
+small { font-size: var(--step--1); }
+mark { background: var(--mark); color: inherit; padding: 0 0.15em; border-radius: 2px; }
+
+::selection {
+  background: var(--accent-subtle);
+}
+
+/* ---- Code ----------------------------------------------------------------- */
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+:not(pre) > code {
+  background: var(--code-inline-bg);
+  padding: 0.13em 0.38em;
+  border-radius: 5px;
+  font-size: 0.84em;
+  word-break: break-word;
+}
+
+pre {
+  font-size: var(--step--1);
+  line-height: 1.6;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-s) var(--space-m);
+  overflow-x: auto;
+  tab-size: 2;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Activate the dark Shiki theme produced by astro.config dual themes. */
+html[data-theme='dark'] .astro-code,
+html[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* ---- Layout primitives ---------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--measure-full);
+  margin-inline: auto;
+  padding-inline: clamp(1.1rem, 5vw, 2.5rem);
+}
+
+/* Prose column: text sits at --measure; .wide / .full children break out. */
+.prose {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+.prose > * + * {
+  margin-block-start: var(--space-m);
+}
+.prose > h2 {
+  margin-block-start: var(--space-l);
+  margin-block-end: calc(-1 * var(--space-2xs));
+}
+.prose > h3 {
+  margin-block-start: var(--space-m);
+}
+.prose ul,
+.prose ol {
+  padding-inline-start: 1.4em;
+}
+.prose li + li {
+  margin-block-start: 0.35em;
+}
+.prose blockquote {
+  border-inline-start: 3px solid var(--accent);
+  padding-inline-start: var(--space-s);
+  color: var(--text-muted);
+  font-style: italic;
+}
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-block: var(--space-l);
+}
+
+/* Break-out modifiers used by figures and charts inside .prose */
+.wide {
+  width: min(var(--measure-wide), 92vw);
+  margin-inline: calc(50% - min(var(--measure-wide), 92vw) / 2);
+}
+.full {
+  width: min(var(--measure-full), 96vw);
+  margin-inline: calc(50% - min(var(--measure-full), 96vw) / 2);
+}
+
+/* ---- Tables --------------------------------------------------------------- */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+}
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.5em 0.7em;
+  border-bottom: 1px solid var(--border);
+}
+.prose th {
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-strong);
+}
+
+/* ---- Utility -------------------------------------------------------------- */
+.text-muted { color: var(--text-muted); }
+.font-sans { font-family: var(--font-sans); }
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5em 1em;
+  border-radius: var(--radius);
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* KaTeX: keep display math from overflowing the column on small screens */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.4em;
+}

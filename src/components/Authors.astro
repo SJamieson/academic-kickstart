@@ -1,0 +1,30 @@
+---
+import { formatAuthors } from '../lib/format';
+interface Props {
+  authors: string[];
+}
+const list = formatAuthors(Astro.props.authors);
+---
+
+<span class="authors">
+  {
+    list.map((a, i) => (
+      <>
+        {a.isSelf ? <strong>{a.name}</strong> : <span>{a.name}</span>}
+        {i < list.length - 1 ? ', ' : ''}
+      </>
+    ))
+  }
+</span>
+
+<style>
+  .authors {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .authors strong {
+    color: var(--text);
+    font-weight: 650;
+  }
+</style>

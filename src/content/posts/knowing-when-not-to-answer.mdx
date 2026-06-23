@@ -1,0 +1,58 @@
+---
+title: "Knowing When Not to Answer: Selective Prediction and Uncertainty"
+description: A short, interactive tour of the coverage–accuracy trade-off — and why a model that can abstain beats one that always answers.
+pubDate: 2026-06-22
+track: technical
+tags: [uncertainty, selective prediction, calibration]
+math: true
+---
+
+import UncertaintyExplorer from '../../components/charts/UncertaintyExplorer.astro';
+import Sidenote from '../../components/Sidenote.astro';
+
+> **This is a demo post.** It exists to exercise the publishing pipeline — LaTeX math, syntax-highlighted code, and an interactive chart — so it can be deleted once real writing lands.
+
+The single most useful thing a deployed model can learn is *when to keep its mouth shut*. A classifier that is right 92% of the time sounds fine until you learn that the 8% it gets wrong are scattered through high-stakes decisions. **Selective prediction** changes the contract: the model may either answer or **abstain**, and we judge it only on the questions it chose to answer.<Sidenote n="1">This is exactly the posture behind uncertainty-aware deployment: route the confident cases to automation and the uncertain ones to a human.</Sidenote>
+
+## The coverage–accuracy trade-off
+
+Suppose every prediction comes with an uncertainty score $u_i \in [0, 1]$. We pick a threshold $\tau$ and answer only when $u_i \le \tau$. Two quantities then matter. **Coverage** is the fraction of inputs we actually answer:
+
+$$
+\mathrm{coverage}(\tau) = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}\!\left[u_i \le \tau\right]
+$$
+
+and **selective accuracy** is how often we are right *on the answered subset*:
+
+$$
+\mathrm{acc}(\tau) = \frac{\sum_{i=1}^{N} \mathbb{1}\!\left[u_i \le \tau\right]\,\mathbb{1}\!\left[\hat{y}_i = y_i\right]}{\sum_{i=1}^{N} \mathbb{1}\!\left[u_i \le \tau\right]}.
+$$
+
+As $\tau \to 0$ we answer almost nothing but are nearly always right; as $\tau \to 1$ we answer everything and collapse back to ordinary accuracy. The art is choosing where on that curve to sit.
+
+## Try it
+
+Drag the threshold below. Teal points are correct predictions, orange are errors; faded points are the ones the model abstains on. Watch how a small drop in coverage buys a large jump in accuracy — because errors concentrate at high uncertainty.
+
+<UncertaintyExplorer caption="Selective prediction on 240 synthetic predictions. Lowering &tau; abstains on the most uncertain inputs first — which is where the errors live." />
+
+## Computing it
+
+The bookkeeping is a few lines:
+
+```python
+import numpy as np
+
+def selective_metrics(uncertainty, correct, tau):
+    """Coverage and selective accuracy at threshold tau."""
+    answered = uncertainty <= tau
+    coverage = answered.mean()
+    sel_acc = correct[answered].mean() if answered.any() else float("nan")
+    return coverage, sel_acc
+
+# Sweep tau to trace the full risk–coverage curve.
+taus = np.linspace(0.02, 1.0, 50)
+curve = [selective_metrics(u, correct, t) for t in taus]
+```
+
+The payoff: instead of reporting a single accuracy number, you report a *curve*, and you get to choose the operating point that matches the cost of being wrong. That choice — not the last decimal of benchmark accuracy — is usually what determines whether a model is safe to ship.
