@@ -1,3 +1,5 @@
 public/files/Multi_Agent_Adaptive_Sampling.pdf filter=lfs diff=lfs merge=lfs -text
 public/files/SpaceCHI_Position_Paper.pdf filter=lfs diff=lfs merge=lfs -text
 public/files/SpaceCHI_Poster.jpg filter=lfs diff=lfs merge=lfs -text
+public/images/*.jpg filter=lfs diff=lfs merge=lfs -text
+public/images/*.png filter=lfs diff=lfs merge=lfs -text

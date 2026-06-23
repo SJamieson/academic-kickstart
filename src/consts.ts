@@ -4,7 +4,7 @@ export const SITE = {
   title: 'Stewart C. Jamieson',
   /** Used in <title> as "Page — TITLE_SUFFIX" and as the brand wordmark. */
   titleSuffix: 'Stewart Jamieson',
-  tagline: 'Building AI that knows what it doesn’t know.',
+  tagline: 'Building AI that makes safe decisions under uncertainty.',
   description:
     'Stewart C. Jamieson — Head of Technology at Themis AI. Writing on risk-aware, uncertainty-aware AI: technical deep-dives and AI strategy & systems.',
   author: 'Stewart C. Jamieson',

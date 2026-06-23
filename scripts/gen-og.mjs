@@ -25,9 +25,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 
   <text x="80" y="250" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="3" fill="#2dd4bf">HEAD OF TECHNOLOGY · THEMIS AI</text>
 
-  <text font-family="Inter, Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#f4f3f0">
-    <tspan x="80" y="345">Building AI that knows</tspan>
-    <tspan x="80" y="435">what it doesn’t know.</tspan>
+  <text font-family="Inter, Helvetica, Arial, sans-serif" font-size="62" font-weight="700" fill="#f4f3f0">
+    <tspan x="80" y="338">Building AI that makes safe</tspan>
+    <tspan x="80" y="418">decisions under uncertainty.</tspan>
   </text>
 
   <text x="80" y="556" font-family="Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#e9e7e2">Stewart C. Jamieson</text>

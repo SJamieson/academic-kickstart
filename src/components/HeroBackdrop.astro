@@ -44,6 +44,8 @@
     let cx = 0, binW = 0, pegTop = 0, rowGap = 0, barBaseY = 0, barMaxH = 0, spawnY = 0, ballR = 4, fall = 6;
     let bins = new Array(NBINS).fill(0);
     let dropped = 0;
+    // 0 = idle, 1 = portrait hovered → strengthen pegs and reveal the readout
+    let reveal = 0, targetReveal = 0;
 
     interface Ball { x: number; tx: number; y: number; row: number; }
     let balls: Ball[] = [];
@@ -98,8 +100,8 @@
       const color = accent();
       ctx.clearRect(0, 0, w, h);
 
-      // pegs
-      ctx.fillStyle = rgba(color, 0.32);
+      // pegs (strengthen on hover)
+      ctx.fillStyle = rgba(color, 0.28 + reveal * 0.32);
       for (let r = 1; r < ROWS; r++) {
         for (let i = 0; i <= r; i++) {
           ctx.beginPath();
@@ -114,7 +116,7 @@
         const hh = barMaxH * (bins[bI] / max);
         if (hh < 0.5) continue;
         const x = cx + (bI - CENTER) * binW - binW * 0.42;
-        ctx.fillStyle = rgba(color, 0.26);
+        ctx.fillStyle = rgba(color, 0.22 + reveal * 0.12);
         ctx.fillRect(x, barBaseY - hh, binW * 0.84, hh);
       }
 
@@ -126,7 +128,7 @@
         const x = cx + t * binW, y = barBaseY - barMaxH * ev;
         t === -CENTER - 0.6 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = rgba(color, 0.5);
+      ctx.strokeStyle = rgba(color, 0.4 + reveal * 0.25);
       ctx.lineWidth = 1.6;
       ctx.stroke();
 
@@ -154,15 +156,17 @@
         for (let i = 0; i < NBINS; i++) tvd += Math.abs(bins[i] / sum - q[i] / qsum);
         fit = Math.max(0, Math.round((1 - tvd / 2) * 100));
       }
-      ctx.font = '600 12px ui-monospace, "JetBrains Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = rgba(color, 0.5);
-      ctx.fillText(
-        `n = ${dropped.toLocaleString()}   ·   fit to normal  ${fit}%`,
-        cx,
-        barBaseY + Math.min(30, h * 0.06),
-      );
-      ctx.textAlign = 'start';
+      if (reveal > 0.03) {
+        ctx.font = '600 12px ui-monospace, "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = rgba(color, reveal * 0.62);
+        ctx.fillText(
+          `n = ${dropped.toLocaleString()}   ·   fit to normal  ${fit}%`,
+          cx,
+          barBaseY + Math.min(30, h * 0.06),
+        );
+        ctx.textAlign = 'start';
+      }
     }
 
     let raf = 0, frame = 0;
@@ -170,11 +174,19 @@
       frame++;
       if (frame % 26 === 0) spawn();
       update();
+      reveal += (targetReveal - reveal) * 0.12;
       draw();
       raf = requestAnimationFrame(loop);
     }
 
     resize();
+
+    // Reveal the readout / strengthen the board while the hero portrait is hovered.
+    const portrait = canvas.closest('.hero')?.querySelector('.hero-portrait img');
+    if (portrait) {
+      portrait.addEventListener('pointerenter', () => (targetReveal = 1));
+      portrait.addEventListener('pointerleave', () => (targetReveal = 0));
+    }
     let rt: number;
     window.addEventListener('resize', () => {
       clearTimeout(rt);
@@ -190,6 +202,7 @@
         s += bins[i];
       }
       dropped = Math.round(s * 80); // representative count for the static readout
+      reveal = 1; // show the readout in the static (reduced-motion) frame
       draw();
     }
 
