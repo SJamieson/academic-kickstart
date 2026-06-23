@@ -4,11 +4,12 @@ description: "Reliable AI systems come from how you handle uncertainty across co
 pubDate: 2026-06-23
 track: strategy
 tags: [uncertainty, reliability, ai systems]
-draft: true
+draft: false
 math: false
 ---
 
 import Sidenote from '../../components/Sidenote.astro';
+import PipelineReliability from '../../components/charts/PipelineReliability.astro';
 
 Most discussions of AI reliability fixate on the components: a better model, a higher benchmark score, one more point of accuracy. But the systems that fail in deployment rarely fail because a single component was a few points short. They fail at the *seams* — where one uncertain component hands its output to the next as if it were certain, and small doubts compound into confident mistakes.
 
@@ -41,27 +42,7 @@ It would be a poor engineering principle if it were free. It isn't. Uncertainty-
 
 ## Try it
 
-{/* CHART: pipeline-reliability
-    Goal: Show the reader that flipping components from "confident oracle" to "uncertainty-aware"
-      — and letting the system act on low confidence — raises end-to-end reliability MORE than
-      buying extra accuracy on any single component. The takeaway: the leverage is in handling
-      uncertainty across the system, not in one better part.
-    Visual: a small left-to-right 3-stage pipeline (nodes connected by arrows). Each stage node has
-      a toggle: "bare answer" vs "uncertainty-aware". A global toggle "act on uncertainty
-      (hedge/abstain/escalate)". A large end-to-end reliability gauge (success rate or net value)
-      updates live. Beside it, a comparison bar: "make one stage +Δ more accurate" vs "make one
-      stage uncertainty-aware + act" — the latter should visibly win at equal effort.
-    Controls: 3 per-stage toggles (bare ↔ uncertainty-aware); a global "act on uncertainty"
-      toggle; a slider "+Δ accuracy on the best stage" in [0, +15pts].
-    Data: deterministic synthetic 3-stage pipeline. Each stage emits a correct/incorrect token with
-      a base accuracy; errors are partially CORRELATED across stages (a shared difficulty factor) so
-      that naive chaining compounds them. "uncertainty-aware + act" lets a stage abstain/escalate on
-      its low-confidence inputs instead of passing a wrong answer downstream. Compute end-to-end
-      success (and a net value under a fixed escalation cost) for every toggle configuration. Seed
-      fixed; no live randomness.
-    Caption: Making components uncertainty-aware and letting the system act on low confidence lifts
-      end-to-end reliability more than buying accuracy on any single component.
-*/}
+<PipelineReliability caption="Making components uncertainty-aware and letting the system <em>act</em> on low confidence lifts end-to-end reliability more than buying accuracy on any single component. (Toggle a stage, then turn on “act”. Synthetic 3-stage pipeline with correlated errors.)" />
 
 ## The series
 

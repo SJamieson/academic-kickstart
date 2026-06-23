@@ -4,11 +4,12 @@ description: "When a system is unsure, the cost of being wrong — not the confi
 pubDate: 2026-06-23
 track: technical
 tags: [uncertainty, escalation, selective prediction]
-draft: true
+draft: false
 math: true
 ---
 
 import Sidenote from '../../components/Sidenote.astro';
+import EscalationPlayground from '../../components/charts/EscalationPlayground.astro';
 
 > *The only winning move is not to play.*
 > — *WarGames* (1983)
@@ -100,33 +101,7 @@ Serve automatically whenever the best available action beats paying for a human;
 
 ## Try it
 
-{/* CHART: escalation-playground
-    Goal: Let the reader see how the optimal action (commit / hedge / abstain→escalate), the net
-      value, and the human-handoff rate all change as they vary (a) how concentrated the belief is
-      and (b) how asymmetric the reward is. The takeaway they should leave with: the action is
-      driven by the cost asymmetry, not by confidence alone, and escalation emerges as the limit.
-    Visual: Two-class stylized panel (labels: "normal", "harmful"; actions: serve-normal,
-      serve-harmful, escalate). Layout:
-        - Main: a 2D decision-region heatmap. x-axis = belief confidence p = sigma(harmful) in
-          [0,1]; y-axis = false-negative penalty (cost of missing "harmful") in [-5, -100]. Each
-          cell colored by the argmax action under E[R]: teal = serve-normal (commit), amber =
-          serve-harmful (hedge to safe), grey = escalate. A draggable crosshair marks the current
-          (p, penalty).
-        - Two readouts that update with the sliders: NET VALUE / decision and HANDOFF RATE (%),
-          both computed over a synthetic population (below).
-        - A small 3-bar panel: E[R] of {serve-normal, serve-harmful, escalate} at the crosshair,
-          so the reader sees which action wins and by how much.
-    Controls: slider FN-penalty in [-5,-100] (default -50); slider human cost c_h in [0, 20]
-      (default 6); optional slider serve-temperature tau in [0.2, 3] (default 1.0). Reward for a
-      correct serve = +5; wrong serve = the relevant penalty; escalate = -c_h regardless.
-    Data: deterministic synthetic population of N=1500 items. Draw belief-confidence p_i ~ Beta(2,2)
-      (seeded), assign true label so that P(harmful | p_i) = p_i (i.e. the belief is itself
-      well-calibrated on average), apply temperature tau to p_i before computing E[R]. For each item
-      pick the argmax action; NET VALUE = mean realized reward, HANDOFF RATE = fraction escalated.
-      The heatmap is the analytic argmax over the (p, penalty) grid (no sampling needed).
-    Caption: Drag the reward asymmetry and watch the safe region (amber) and the escalate region
-      (grey) grow — confidence alone never draws these boundaries; the costs do.
-*/}
+<EscalationPlayground caption="Drag the reward asymmetry — and the cost of a human review — and watch the safe region (amber) and the escalate region (grey) grow." />
 
 ## Takeaways
 

@@ -1,0 +1,161 @@
+---
+// Interactive 3-stage pipeline for "Building Reliable Systems…". Toggle each stage
+// between a bare answer and an uncertainty-aware one, let the system act on low
+// confidence (escalate), and watch end-to-end reliability. A side-by-side shows
+// that one uncertainty-aware+acting stage beats buying raw accuracy on one stage.
+interface Props {
+  caption?: string;
+}
+const { caption } = Astro.props;
+---
+
+<figure class="wide chart pipeline" data-pipeline>
+  <div class="stages">
+    {[0, 1, 2].map((i) => (
+      <>
+        <button class="stage" data-stage={i}>
+          <span class="stage-name">Stage {i + 1}</span>
+          <span class="stage-state">bare answer</span>
+        </button>
+        {i < 2 && <span class="arrow" aria-hidden="true">→</span>}
+      </>
+    ))}
+  </div>
+
+  <div class="row">
+    <button class="act-toggle" data-act aria-pressed="false">Act on low confidence (escalate)</button>
+    <label class="delta">+accuracy on the strongest stage <output class="o-delta">+0pts</output>
+      <input class="s-delta" type="range" min="0" max="15" step="1" value="0" /></label>
+  </div>
+
+  <div class="row gauges">
+    <div class="gauge">
+      <div class="gauge-bar"><i class="g-rel"></i></div>
+      <div class="gauge-lab"><strong class="o-rel">—</strong><small>end-to-end reliability</small></div>
+    </div>
+    <div class="stat"><strong class="o-net">—</strong><small>net value (after escalation cost)</small></div>
+    <div class="stat"><strong class="o-esc">—</strong><small>escalation rate</small></div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-title">Same effort, two ways — from the all-bare baseline:</div>
+    <div class="cbar"><span class="cbar-k">buy <output class="o-delta2">+0pts</output> accuracy<br/>on the strongest stage</span><div class="cbar-t"><i class="c-acc"></i></div><span class="cbar-v v-acc">—</span></div>
+    <div class="cbar"><span class="cbar-k">make one stage<br/>uncertainty-aware + act</span><div class="cbar-t"><i class="c-unc"></i></div><span class="cbar-v v-unc">—</span></div>
+  </div>
+  {caption && <figcaption set:html={caption} />}
+</figure>
+
+<style>
+  .pipeline { margin-block: var(--space-l); padding: var(--space-m); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); font-family: var(--font-sans); }
+  .stages { display: flex; align-items: stretch; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+  .stage { flex: 1 1 8rem; max-width: 12rem; display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0.6rem; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--bg-subtle); cursor: pointer; text-align: center; transition: all 0.15s ease; }
+  .stage[data-on='1'] { background: var(--accent-subtle); border-color: var(--accent); }
+  .stage-name { font-weight: 650; font-size: 0.9rem; }
+  .stage-state { font-size: 0.74rem; color: var(--text-muted); }
+  .stage[data-on='1'] .stage-state { color: var(--accent); font-weight: 600; }
+  .arrow { align-self: center; color: var(--text-faint); font-size: 1.2rem; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-m); align-items: center; margin-top: var(--space-m); }
+  .act-toggle { font-size: 0.86rem; font-weight: 550; padding: 0.45rem 0.9rem; border-radius: 99px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); cursor: pointer; }
+  .act-toggle[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .delta { font-size: var(--step--1); font-weight: 550; display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 13rem; }
+  .delta output { font-family: var(--font-mono); color: var(--accent); }
+  .delta input { accent-color: var(--accent); }
+  .gauges { align-items: center; }
+  .gauge { flex: 1 1 14rem; }
+  .gauge-bar { height: 0.9rem; background: var(--bg-subtle); border-radius: 99px; overflow: hidden; }
+  .gauge-bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s ease; }
+  .gauge-lab { display: flex; align-items: baseline; gap: 0.4rem; margin-top: 0.3rem; }
+  .gauge-lab strong { font-size: var(--step-2); font-variant-numeric: tabular-nums; }
+  .gauge-lab small, .stat small { color: var(--text-muted); font-size: 0.72rem; }
+  .stat { display: flex; flex-direction: column; }
+  .stat strong { font-size: var(--step-1); font-variant-numeric: tabular-nums; }
+  .compare { margin-top: var(--space-l); border-top: 1px solid var(--border); padding-top: var(--space-s); }
+  .compare-title { font-size: 0.78rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: var(--space-s); }
+  .cbar { display: grid; grid-template-columns: 11rem 1fr 3rem; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; font-size: 0.8rem; }
+  .cbar-t { background: var(--bg-subtle); border-radius: 4px; height: 1.4rem; overflow: hidden; }
+  .cbar-t i { display: block; height: 100%; width: 0; transition: width 0.3s ease; }
+  .c-acc { background: var(--border-strong); }
+  .c-unc { background: var(--accent); }
+  .cbar-v { font-family: var(--font-mono); text-align: right; }
+  figcaption { margin-top: 0.7rem; font-size: var(--step--1); color: var(--text-muted); text-align: center; }
+</style>
+
+<script>
+  const N = 5000, ACC = [0.88, 0.84, 0.9], BEST = 2, BETA = 0.6, CONF_T = 0.65, C_ESC = 0.2;
+
+  function mulberry32(seed: number) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  // Shared difficulty d_i (correlates errors across stages) + per-stage draws.
+  const rnd = mulberry32(11);
+  const D: number[] = [], U: number[][] = [[], [], []];
+  for (let i = 0; i < N; i++) { D.push(rnd()); for (let k = 0; k < 3; k++) U[k].push(rnd()); }
+  const clamp = (x: number) => Math.max(0.02, Math.min(0.999, x));
+
+  // config: aware[3], act, delta(pts on BEST stage)
+  function evaluate(aware: boolean[], act: boolean, delta: number) {
+    let ok = 0, esc = 0;
+    for (let i = 0; i < N; i++) {
+      const d = D[i];
+      let outcome = 0; // 0 fail, 1 served-ok, 2 escalated
+      for (let k = 0; k < 3; k++) {
+        const q = clamp(ACC[k] + (k === BEST ? delta / 100 : 0) - BETA * (d - 0.5));
+        if (aware[k] && act && q < CONF_T) { outcome = 2; break; } // escalate hard inputs
+        if (U[k][i] >= q) { outcome = 0; break; } // served a wrong answer
+        if (k === 2) outcome = 1; // survived all stages
+      }
+      if (outcome === 2) { ok++; esc++; }
+      else if (outcome === 1) ok++;
+    }
+    const reliability = ok / N, escRate = esc / N;
+    return { reliability, escRate, net: reliability - C_ESC * escRate };
+  }
+
+  function init(root: HTMLElement) {
+    const $ = (s: string) => root.querySelector(s) as HTMLElement;
+    const aware = [false, false, false];
+    let act = false;
+    const stages = Array.from(root.querySelectorAll<HTMLButtonElement>('.stage'));
+    const actBtn = $('.act-toggle') as HTMLButtonElement;
+    const sDelta = $('.s-delta') as HTMLInputElement;
+
+    function render() {
+      const delta = +sDelta.value;
+      $('.o-delta').textContent = '+' + delta + 'pts';
+      $('.o-delta2').textContent = '+' + delta + 'pts';
+      stages.forEach((b, k) => {
+        b.dataset.on = aware[k] ? '1' : '0';
+        (b.querySelector('.stage-state') as HTMLElement).textContent = aware[k] ? 'uncertainty-aware' : 'bare answer';
+      });
+      actBtn.setAttribute('aria-pressed', act ? 'true' : 'false');
+
+      const live = evaluate(aware, act, delta);
+      ($('.g-rel') as HTMLElement).style.width = (live.reliability * 100).toFixed(0) + '%';
+      $('.o-rel').textContent = (live.reliability * 100).toFixed(0) + '%';
+      $('.o-net').textContent = (live.net * 100).toFixed(0) + '%';
+      $('.o-esc').textContent = (live.escRate * 100).toFixed(0) + '%';
+
+      // comparison vs the all-bare baseline (independent of the live toggles)
+      const acc = evaluate([false, false, false], false, delta).reliability; // buy +delta on best
+      const unc = evaluate([true, false, false], true, 0).reliability;        // stage 1 aware + act
+      const lo = evaluate([false, false, false], false, 0).reliability, hi = 1;
+      const w = (v: number) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
+      ($('.c-acc') as HTMLElement).style.width = w(acc) + '%';
+      ($('.c-unc') as HTMLElement).style.width = w(unc) + '%';
+      $('.v-acc').textContent = (acc * 100).toFixed(0) + '%';
+      $('.v-unc').textContent = (unc * 100).toFixed(0) + '%';
+    }
+
+    stages.forEach((b, k) => b.addEventListener('click', () => { aware[k] = !aware[k]; render(); }));
+    actBtn.addEventListener('click', () => { act = !act; render(); });
+    sDelta.addEventListener('input', render);
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-pipeline]').forEach(init);
+</script>
