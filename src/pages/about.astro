@@ -37,7 +37,7 @@ const appearances = [
   <article class="container about">
     <!-- Intro -->
     <header class="about-head">
-      <img class="avatar" src="/images/avatar.webp" alt="Stewart C. Jamieson" width="160" height="160" loading="eager" decoding="async" />
+      <img class="portrait" src="/images/portrait.webp" alt="Stewart C. Jamieson" width="208" height="208" loading="eager" decoding="async" />
       <div class="about-intro">
         <p class="eyebrow">About</p>
         <h1>Stewart C. Jamieson</h1>
@@ -130,13 +130,13 @@ const appearances = [
     align-items: center;
     flex-wrap: wrap;
   }
-  .avatar {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
+  .portrait {
+    width: clamp(150px, 40vw, 208px);
+    height: clamp(150px, 40vw, 208px);
+    border-radius: var(--radius-lg);
     object-fit: cover;
-    border: 3px solid var(--surface);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow);
     flex-shrink: 0;
   }
   .about-intro h1 {
