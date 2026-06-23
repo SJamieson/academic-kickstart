@@ -28,7 +28,7 @@ const facts = [
 ];
 ---
 
-<BaseLayout>
+<BaseLayout preloadImage="/images/avatar.webp">
   <!-- Hero -->
   <section class="hero">
     <HeroBackdrop />
@@ -59,7 +59,7 @@ const facts = [
           height="280"
           loading="eager"
           fetchpriority="high"
-          decoding="async"
+          decoding="sync"
         />
       </div>
     </div>

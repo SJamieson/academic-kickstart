@@ -8,12 +8,14 @@ import { SITE } from '../consts';
 interface Props {
   title?: string;
   description?: string;
-  /** Absolute or root-relative OG image; defaults handled in Phase 5. */
+  /** Absolute or root-relative OG image. */
   image?: string;
   /** When true, marks the page as an article for OG. */
   article?: boolean;
   /** Constrain <main> to the reading column by default. */
   wide?: boolean;
+  /** Root-relative image to preload (e.g. an above-the-fold hero portrait). */
+  preloadImage?: string;
 }
 
 const {
@@ -21,6 +23,7 @@ const {
   description = SITE.description,
   image,
   article = false,
+  preloadImage,
 } = Astro.props;
 
 const pageTitle = title ? `${title} — ${SITE.titleSuffix}` : `${SITE.title} — ${SITE.tagline}`;
@@ -52,6 +55,7 @@ const jsonLd = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
     <link rel="canonical" href={canonical} />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
