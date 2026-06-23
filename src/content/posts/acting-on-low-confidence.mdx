@@ -1,0 +1,133 @@
+---
+title: "Acting on Low Confidence: Hedge, Abstain, or Escalate"
+description: "When a system is unsure, the cost of being wrong — not the confidence score — should decide whether it hedges, abstains, or calls a human."
+pubDate: 2026-06-23
+track: technical
+tags: [uncertainty, escalation, selective prediction]
+draft: true
+math: true
+---
+
+import Sidenote from '../../components/Sidenote.astro';
+
+> *The only winning move is not to play.*
+> — *WarGames* (1983)
+
+A model that guesses the answer to a question has only two possible outcomes: it guesses right, or it guesses wrong. But guessing is just one move, and often not the best one available. A system that is unsure can also **hedge** toward a safer answer, **abstain**, or **escalate** to a human — and sometimes, like the computer in *WarGames*, its best move is not to play the guess at all. Which move is right is not a matter of *how* unsure the system is. It is a matter of what a mistake *costs*.
+
+This is the second post in a series on building reliable systems out of uncertainty-aware components. [The first post](/writing/reliable-systems-from-uncertain-components) makes the broad case: reliability comes from propagating each component's uncertainty and *acting* on it, rather than from making any single component better. This post takes the narrow, practical core — once you have a belief, how should low confidence change what the system does?
+
+## The setup: a panel, and a belief
+
+Write $\sigma$ for the system's *belief*: a probability distribution over the possible answers, so $\sigma(y)$ is the probability the system assigns to answer $y$ being correct, and $\sum_y \sigma(y) = 1$. An *action* $a$ is what the system actually does in response.
+
+Where does $\sigma$ come from? In the systems this series studies, the answer isn't produced by one model but by a *panel* of them — several models that each label the input independently, whose votes are then pooled into the single belief $\sigma$. Pooling many noisy models into one trustworthy belief is its own problem, and the subject of the next post. Here we take $\sigma$ as given and ask what to *do* with it.
+
+## The four moves
+
+A *serving policy* maps the belief $\sigma$ to an action:
+
+- **Commit** — serve $\arg\max_y \sigma(y)$, the single most likely answer.
+  *The panel is 97% sure a post is benign, so it publishes it automatically.*
+- **Hedge** — serve a different answer that is safer under the costs, even if it is not the most likely.
+  *Unsure whether a post is benign or harmful, it limits the post's reach anyway — a missed harmful post costs far more than a throttled benign one.*
+- **Abstain** — decline to answer.
+  *It returns "no automated decision" and leaves the post in whatever state it was already in.*
+- **Escalate** — hand the case to a human, or to a more expensive stage.
+  *It routes the post to a human moderator's queue.*
+
+The temptation is to pick among these by a confidence threshold alone: "commit if $\max_y \sigma(y) > 0.9$, else escalate." That throws away the one thing that makes the choice well-posed — the asymmetry of the costs.
+
+## Rewards: what a mistake costs
+
+Not every mistake costs the same, and that asymmetry is the whole game. A *reward structure* makes it explicit: a table $R[a, y]$ giving the payoff of taking action $a$ when the truth turns out to be $y$. Correct answers earn something; wrong ones cost something; and crucially the costs need not be symmetric — missing a fraudulent transaction is not as cheap as querying a legitimate one.
+
+Writing the reward structure down honestly is a modeling problem in its own right — arguably its own post — but even a rough one beats the alternative. Optimizing for raw accuracy silently assumes *every error is equal*, which is almost never true of anything you would actually deploy.
+
+## The reward structure sets the policy
+
+Given a belief $\sigma$ and a reward structure $R$, the reward-optimal answer maximizes expected reward under the belief:
+
+$$
+\hat{y} = \arg\max_{a}\ \sum_{y} \sigma(y)\, R[a, y].
+$$
+
+Under a **symmetric** reward (every mistake costs the same), this reduces to $\arg\max_y \sigma(y)$ — committing to the leader is optimal, and confidence is all that matters. The interesting behavior appears under **asymmetric** rewards. Take a high-stakes band where a correct call earns $+5$ but a wrong commit costs $-50$:
+
+$$
+R = \begin{pmatrix} +5 & -50 \\ -50 & +5 \end{pmatrix}.
+$$
+
+Now the argmax can *hedge* to a safer answer even when it is not the most probable label, because the $-50$ tail dominates the expectation. A useful lever is a *temperature* on the belief, $\sigma_\tau \propto \sigma^{\tau}$: at $\tau = 1$ you serve the belief as-is, $\tau \to \infty$ commits ever harder to the leader, and $\tau < 1$ *flattens* the belief so the decision hedges. Low effective confidence plus high cost-asymmetry is exactly the regime where flattening — hedging — pays.
+
+```python
+import numpy as np
+
+def serve(sigma, R, tau=1.0):
+    """Reward-optimal action under a (temperature-adjusted) belief."""
+    s = sigma ** tau
+    s = s / s.sum()
+    expected_reward = R @ s          # E[R | action]
+    return int(expected_reward.argmax()), expected_reward.max()
+```
+
+## What the data shows
+
+On a 60-class intent task served by a panel of 40 models, under the $+5/-50$ band, a serve that *adapts its temperature to the reward* beats every fixed rule. Net value per decision (higher is better; the band is structurally lossy at this accuracy, so the contest is who loses least):
+
+| serve rule | net / decision | vs. reward-aware |
+|---|---|---|
+| **reward-aware (hedging)** | **−2.40** | — |
+| reliability (consensus) | −2.62 | $p = 1.5\times10^{-3}$ |
+| product (naive-Bayes) | −2.65 | $p = 1.5\times10^{-3}$ |
+| best single model | −2.93 | $p = 5.5\times10^{-3}$ |
+
+The mechanism is exactly the hedge above: the policy drops the serve temperature to $\tau \approx 0.30$, flattening an over-confident consensus so the decision steps off the $-50$ cliff toward the safe class.
+
+> **Note.** The gain here is a *reward* effect, not a calibration improvement — the belief's calibration error does not actually drop when this helps. That distinction matters enough that it gets its own post; the short version is that "it improved accuracy" and "it calibrated the belief" are different claims, and only one of them is true here.
+
+And the sign of the advice flips with the costs. Under a recall-demanding moderation reward — where *missing* a harmful item is the expensive error — an *over-confident* serve is better, because it commits to the harmful label and dodges the false-negative penalty. There is no universal "hedge when unsure" rule; there is only "act according to the costs," which a later post maps out in full.
+
+## From hedging to escalation
+
+Abstention and escalation are the same idea taken to its limit: if no answer clears the bar, don't serve one. Give the system one more action — hand off to a human at a known cost $c_h$ — and the policy becomes a single comparison:<Sidenote n="1">This is a decision-theoretic *closure* of the serving results above; the benchmark measured the net value of serve rules, not literal handoff rates. The escalation threshold is the natural extension of the same expected-reward logic.</Sidenote>
+
+$$
+\text{escalate} \quad \Longleftrightarrow \quad \max_{a}\ \mathbb{E}_\sigma\big[R[a, y]\big] \;<\; -\,c_h.
+$$
+
+Serve automatically whenever the best available action beats paying for a human; escalate otherwise. This bounds the downside by construction — you never accept an automated decision worse than the cost of oversight — and the human-handoff *rate* falls out of it, which is the quantity that actually decides whether an oversight budget is affordable. Lower $c_h$ (cheap review) escalates more; a steeper cost-asymmetry escalates more; high confidence escalates less.
+
+## Try it
+
+{/* CHART: escalation-playground
+    Goal: Let the reader see how the optimal action (commit / hedge / abstain→escalate), the net
+      value, and the human-handoff rate all change as they vary (a) how concentrated the belief is
+      and (b) how asymmetric the reward is. The takeaway they should leave with: the action is
+      driven by the cost asymmetry, not by confidence alone, and escalation emerges as the limit.
+    Visual: Two-class stylized panel (labels: "normal", "harmful"; actions: serve-normal,
+      serve-harmful, escalate). Layout:
+        - Main: a 2D decision-region heatmap. x-axis = belief confidence p = sigma(harmful) in
+          [0,1]; y-axis = false-negative penalty (cost of missing "harmful") in [-5, -100]. Each
+          cell colored by the argmax action under E[R]: teal = serve-normal (commit), amber =
+          serve-harmful (hedge to safe), grey = escalate. A draggable crosshair marks the current
+          (p, penalty).
+        - Two readouts that update with the sliders: NET VALUE / decision and HANDOFF RATE (%),
+          both computed over a synthetic population (below).
+        - A small 3-bar panel: E[R] of {serve-normal, serve-harmful, escalate} at the crosshair,
+          so the reader sees which action wins and by how much.
+    Controls: slider FN-penalty in [-5,-100] (default -50); slider human cost c_h in [0, 20]
+      (default 6); optional slider serve-temperature tau in [0.2, 3] (default 1.0). Reward for a
+      correct serve = +5; wrong serve = the relevant penalty; escalate = -c_h regardless.
+    Data: deterministic synthetic population of N=1500 items. Draw belief-confidence p_i ~ Beta(2,2)
+      (seeded), assign true label so that P(harmful | p_i) = p_i (i.e. the belief is itself
+      well-calibrated on average), apply temperature tau to p_i before computing E[R]. For each item
+      pick the argmax action; NET VALUE = mean realized reward, HANDOFF RATE = fraction escalated.
+      The heatmap is the analytic argmax over the (p, penalty) grid (no sampling needed).
+    Caption: Drag the reward asymmetry and watch the safe region (amber) and the escalate region
+      (grey) grow — confidence alone never draws these boundaries; the costs do.
+*/}
+
+## Takeaways
+
+A system that knows it is unsure is only halfway to being reliable; the other half is a policy for *acting* on that uncertainty, and that policy is set by the cost of being wrong, not by a confidence cutoff. Hedge when a wrong commit is catastrophic, commit when the costs are symmetric or recall is king, and escalate when no automated action beats the price of a human. Report the operating point — the hedge threshold, the handoff rate — not just an accuracy number, because that choice is what determines whether the system is safe to deploy.

@@ -1,0 +1,75 @@
+---
+title: "Building Reliable Systems from Uncertainty-Aware Components"
+description: "Reliable AI systems come from how you handle uncertainty across components — not from making any single component better. A short field guide."
+pubDate: 2026-06-23
+track: strategy
+tags: [uncertainty, reliability, ai systems]
+draft: true
+math: false
+---
+
+import Sidenote from '../../components/Sidenote.astro';
+
+Most discussions of AI reliability fixate on the components: a better model, a higher benchmark score, one more point of accuracy. But the systems that fail in deployment rarely fail because a single component was a few points short. They fail at the *seams* — where one uncertain component hands its output to the next as if it were certain, and small doubts compound into confident mistakes.
+
+This series argues a different starting point: **reliability is a property of how a system handles uncertainty across its components, not of how good any one component is.** A pipeline built from honest, uncertainty-aware parts — parts that know what they don't know, feeding a system that acts on that knowledge — can be more reliable than one built from individually stronger parts that don't.
+
+## Two layers
+
+Turning that into engineering takes two things, and the rest of the series is organized around them:
+
+- **Construct** components that carry a usable signal of their own uncertainty.
+- **Compose and act** on those signals — pool them into a system-level belief, and decide what to do when that belief is weak.
+
+The first is about the parts; the second is about the system. Most of the leverage, it turns out, is in the second.
+
+## Components that know what they don't know
+
+An *uncertainty-aware component* doesn't just emit an answer; it emits an answer together with a usable signal of how much to trust it — a calibrated probability, a posterior distribution, the spread of an ensemble.<Sidenote n="1">Making uncertainty quantification for AI models easier is my day job at [Themis AI](https://themisai.io). This series is something I write on my own time, expanding on research threads I've been investigating since my doctorate.</Sidenote> That signal is the raw material everything downstream depends on. A component that is confidently wrong is far more dangerous to a system than one that is honestly unsure, because only the second gives the system a chance to react.
+
+## The composition problem
+
+Once components can express doubt, the system has to combine them — and this is harder than it looks. The naive move is to treat each component as an independent expert and multiply their votes together. Do that and the system becomes *overconfident*: correlated components get counted as independent corroboration, and the combined belief collapses to near-certainty on flimsy evidence. Even single neural networks are [systematically overconfident](https://arxiv.org/abs/2205.09310) — reporting more certainty than their accuracy warrants, on familiar and unfamiliar inputs alike — and naive composition only compounds the problem. Discounting that redundancy so the system's belief stays honest is a problem in its own right, and the subject of a later post.
+
+## The action problem
+
+A calibrated belief is still only half of a reliable system. The other half is a policy for *acting* on it: when the belief is confident, commit; when it is weak, hedge, abstain, or escalate to a human. Which of those is right turns out to depend not on how unsure the system is, but on what a mistake costs — the subject of the companion post, [Acting on Low Confidence](/writing/acting-on-low-confidence).
+
+## When uncertainty-awareness doesn't help
+
+It would be a poor engineering principle if it were free. It isn't. Uncertainty-aware composition costs effort, and it sometimes *backfires*: on cheap, easy problems there is too little data to estimate the corrections, and under some cost structures a deliberately overconfident system is genuinely the better one. A reliable engineer needs to know which regime they are in. A later post maps where this machinery earns its keep — and where the honest move is a simpler system.
+
+## Try it
+
+{/* CHART: pipeline-reliability
+    Goal: Show the reader that flipping components from "confident oracle" to "uncertainty-aware"
+      — and letting the system act on low confidence — raises end-to-end reliability MORE than
+      buying extra accuracy on any single component. The takeaway: the leverage is in handling
+      uncertainty across the system, not in one better part.
+    Visual: a small left-to-right 3-stage pipeline (nodes connected by arrows). Each stage node has
+      a toggle: "bare answer" vs "uncertainty-aware". A global toggle "act on uncertainty
+      (hedge/abstain/escalate)". A large end-to-end reliability gauge (success rate or net value)
+      updates live. Beside it, a comparison bar: "make one stage +Δ more accurate" vs "make one
+      stage uncertainty-aware + act" — the latter should visibly win at equal effort.
+    Controls: 3 per-stage toggles (bare ↔ uncertainty-aware); a global "act on uncertainty"
+      toggle; a slider "+Δ accuracy on the best stage" in [0, +15pts].
+    Data: deterministic synthetic 3-stage pipeline. Each stage emits a correct/incorrect token with
+      a base accuracy; errors are partially CORRELATED across stages (a shared difficulty factor) so
+      that naive chaining compounds them. "uncertainty-aware + act" lets a stage abstain/escalate on
+      its low-confidence inputs instead of passing a wrong answer downstream. Compute end-to-end
+      success (and a net value under a fixed escalation cost) for every toggle configuration. Seed
+      fixed; no live randomness.
+    Caption: Making components uncertainty-aware and letting the system act on low confidence lifts
+      end-to-end reliability more than buying accuracy on any single component.
+*/}
+
+## The series
+
+1. **This post** — the frame: reliability lives in how you handle uncertainty across components.
+2. [**Acting on Low Confidence**](/writing/acting-on-low-confidence) — what a system should do when it is unsure, and why the cost of being wrong decides.
+3. **Composing without overconfidence** *(coming soon)* — why naive pooling manufactures false certainty, and how to discount redundancy.
+4. **An honest map** *(coming soon)* — when uncertainty-aware composition helps, ties, or backfires.
+
+## Takeaways
+
+Stop asking only whether each component is good enough, and start asking whether the system *propagates and acts on* their uncertainty. The reliable system is not the one with the best parts; it is the one that knows when its parts are unsure and does something sensible about it. The rest of this series is about how.
