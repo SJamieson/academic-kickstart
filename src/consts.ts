@@ -1,13 +1,13 @@
 // Centralized site identity, navigation, and social links.
 
 export const SITE = {
-  title: 'Stewart C. Jamieson',
+  title: 'Stewart Jamieson',
   /** Used in <title> as "Page — TITLE_SUFFIX" and as the brand wordmark. */
   titleSuffix: 'Stewart Jamieson',
   tagline: 'Building AI that makes safe decisions under uncertainty.',
   description:
-    'Stewart C. Jamieson — Head of Technology at Themis AI. Writing on risk-aware, uncertainty-aware AI: technical deep-dives and AI strategy & systems.',
-  author: 'Stewart C. Jamieson',
+    'Stewart Jamieson — Head of Technology at Themis AI. Writing on risk-aware, uncertainty-aware AI: technical deep-dives and AI strategy & systems.',
+  author: 'Stewart Jamieson',
   email: 'sjamieson@alum.mit.edu',
   url: 'https://www.stewartjamieson.com',
   locale: 'en_US',

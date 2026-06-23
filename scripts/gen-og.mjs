@@ -30,7 +30,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
     <tspan x="80" y="418">decisions under uncertainty.</tspan>
   </text>
 
-  <text x="80" y="556" font-family="Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#e9e7e2">Stewart C. Jamieson</text>
+  <text x="80" y="556" font-family="Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#e9e7e2">Stewart Jamieson</text>
   <text x="80" y="556" text-anchor="end" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" fill="#9b988f"><tspan x="1120">stewartjamieson.com</tspan></text>
 </svg>`;
 
