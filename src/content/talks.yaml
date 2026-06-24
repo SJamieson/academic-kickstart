@@ -2,6 +2,17 @@
 # slides/video/poster assets from prior recordings. Each entry needs a unique `id`.
 
 # ---- Invited & Selected ----------------------------------------------------
+- id: mit-enterprise-ai-forum-2026
+  title: Measuring and Managing Risk in Production AI Systems
+  role: Startup Lightning Talk
+  event: MIT Enterprise AI Forum (MIT Startup Exchange)
+  location: Cambridge, MA
+  date: 2026-04-15
+  category: selected
+  featured: true
+  links:
+    video: https://www.youtube.com/watch?v=xGzzT7a415I
+
 - id: t-challenge-2025
   title: "Capsa: Making AI Trustworthy"
   role: Award Winner & Presenter
@@ -90,7 +101,6 @@
   location: Las Vegas, NV
   date: 2024-08-01
   category: industry
-  featured: true
 
 - id: ocean-encounters-2023
   title: "ROBOTS: How New Technologies Are Advancing Ocean Research"

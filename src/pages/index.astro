@@ -20,11 +20,11 @@ const recentPosts = (await getCollection('posts'))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 3);
 
-const facts = [
-  'MIT Ph.D.',
-  'Best Paper · ICRA 2020',
-  '10+ papers · AI & robotics',
-  'Reviewer · NeurIPS / ICML / ICLR',
+const facts: { label: string; href: string; external?: boolean }[] = [
+  { label: 'MIT Ph.D.', href: '/about#education' },
+  { label: 'Best Paper · ICRA 2020', href: '/publication/jamieson-2020-active-reward' },
+  { label: '10+ papers · AI & robotics', href: '/research' },
+  { label: 'Workshop Organizer · ICRA / ICLR', href: '/workshops' },
 ];
 ---
 
@@ -48,7 +48,13 @@ const facts = [
           <a class="btn" href="/about">About me</a>
         </div>
         <ul class="hero-facts">
-          {facts.map((f) => <li>{f}</li>)}
+          {facts.map((f) => (
+            <li>
+              <a href={f.href} {...(f.external ? { target: '_blank', rel: 'noopener' } : {})}>
+                {f.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -86,7 +92,11 @@ const facts = [
       {
         featuredPubs.map((pub) => (
           <li class="card">
-            {pub.data.award && <span class="card-badge">★ {pub.data.award}</span>}
+            {pub.data.award && (
+              <a class="card-badge" href={`/publication/${pub.id}`}>
+                ★ {pub.data.award}
+              </a>
+            )}
             <h3 class="card-title">
               <a href={`/publication/${pub.id}`}>{pub.data.title}</a>
             </h3>
@@ -203,6 +213,11 @@ const facts = [
     border-color: var(--accent-hover);
     color: #fff;
   }
+  /* Dark-mode accent is bright cyan — use near-black text for legibility. */
+  :global(html[data-theme='dark']) .btn-primary,
+  :global(html[data-theme='dark']) .btn-primary:hover {
+    color: #16171b;
+  }
   .hero-facts {
     list-style: none;
     padding: 0;
@@ -219,7 +234,19 @@ const facts = [
     background: color-mix(in srgb, var(--surface) 80%, transparent);
     border: 1px solid var(--border);
     border-radius: 99px;
+    transition: border-color 0.15s ease;
+  }
+  .hero-facts li:hover {
+    border-color: var(--accent);
+  }
+  .hero-facts a {
+    display: block;
     padding: 0.18rem 0.7rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .hero-facts li:hover a {
+    color: var(--accent);
   }
   .hero-portrait {
     justify-self: start;
@@ -306,10 +333,15 @@ const facts = [
     box-shadow: var(--shadow);
   }
   .card-badge {
+    display: inline-block;
     font-family: var(--font-sans);
     font-size: 0.72rem;
     font-weight: 650;
     color: #9a6b00;
+    text-decoration: none;
+  }
+  .card-badge:hover {
+    text-decoration: underline;
   }
   :global(html[data-theme='dark']) .card-badge {
     color: #e6b450;

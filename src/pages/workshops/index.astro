@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+// Workshops I've co-organized. Add new entries at the top (sorted newest-first).
+const workshops: {
+  acronym: string;
+  title: string;
+  venue: string;
+  year: string;
+  location: string;
+  role: string;
+  url: string;
+  coOrganizers: string[];
+  blurb: string;
+}[] = [
+  {
+    acronym: 'RUNE',
+    title: 'Robots for Understanding Natural Ecosystems',
+    venue: 'ICRA 2024',
+    year: '2024',
+    location: 'Yokohama, Japan',
+    role: 'Co-organizer',
+    url: 'https://sites.google.com/view/icra-2024-rune-workshop/home',
+    coOrganizers: ['Levi Cai', 'Seth McCammon', 'Philippe Giguère', 'Yogesh Girdhar'],
+    blurb:
+      'How can field robotics, computer vision, and AI help us study complex ecological interactions? A full-day workshop on robotic platforms for ecosystem monitoring, conservation, and scientific discovery in natural environments.',
+  },
+  {
+    acronym: 'AI4ESS',
+    title: 'AI for Earth and Space Science',
+    venue: 'ICLR 2022',
+    year: '2022',
+    location: 'Virtual',
+    role: 'Co-organizer',
+    url: 'https://iclr.cc/virtual/2022/workshop/4550',
+    coOrganizers: [
+      'Natasha Dudek',
+      'Karianne Bergen',
+      'Valentin Bickel',
+      'Will Chapman',
+      'Johanna Hansen',
+    ],
+    blurb:
+      'Machine learning for the Earth and space sciences — spanning atmosphere, ecology, water systems, geology, and planetary exploration — with an emphasis on interpretability and physics-informed models.',
+  },
+];
+---
+
+<BaseLayout
+  title="Workshops"
+  description="Academic workshops co-organized by Stewart Jamieson at venues including ICRA and ICLR, at the intersection of AI, robotics, and the natural sciences."
+>
+  <PageHeader eyebrow="Workshops" title="Workshops I've organized">
+    <p>
+      Bringing researchers together at the intersection of AI, robotics, and the natural sciences —
+      co-organized at top robotics and machine-learning venues.
+    </p>
+  </PageHeader>
+
+  <div class="container ws-page">
+    <ul class="ws-list">
+      {
+        workshops.map((w) => (
+          <li>
+            <a class="ws-card" href={w.url} target="_blank" rel="noopener">
+              <div class="ws-top">
+                <span class="ws-acronym">{w.acronym}</span>
+                <span class="ws-meta">
+                  {w.venue} · {w.location}
+                </span>
+                <span class="ws-role">{w.role}</span>
+              </div>
+              <h2 class="ws-title">{w.title}</h2>
+              <p class="ws-blurb">{w.blurb}</p>
+              <p class="ws-organizers">
+                <span class="ws-organizers-label">Co-organizers:</span> {w.coOrganizers.join(', ')}
+              </p>
+              <span class="ws-visit">Visit workshop site ↗</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .ws-page {
+    max-width: var(--measure-wide);
+    padding-bottom: var(--space-xl);
+  }
+  .ws-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+  .ws-card {
+    display: block;
+    padding: var(--space-l);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--text);
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .ws-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .ws-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: var(--space-s);
+  }
+  .ws-acronym {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border-radius: var(--radius);
+    padding: 0.2rem 0.55rem;
+  }
+  .ws-meta {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .ws-role {
+    margin-left: auto;
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ws-title {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+  .ws-blurb {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    max-width: var(--measure);
+  }
+  .ws-organizers {
+    margin-top: var(--space-s);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-faint);
+  }
+  .ws-organizers-label {
+    font-weight: 600;
+  }
+  .ws-visit {
+    display: inline-block;
+    margin-top: var(--space-s);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  @media (max-width: 34rem) {
+    .ws-role {
+      margin-left: 0;
+    }
+  }
+</style>

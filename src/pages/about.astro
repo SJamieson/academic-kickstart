@@ -3,34 +3,78 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { SOCIAL, CV_URL, THEMIS_URL } from '../consts';
 
-const education = [
+const HOW = { name: 'Jonathan P. How', url: 'https://aeroastro.mit.edu/people/jonathan-p-how/' };
+const GIRDHAR = { name: 'Yogesh Girdhar', url: 'https://directory.whoi.edu/profile/ygirdhar/' };
+const SCHOELLIG = { name: 'Angela Schoellig', url: 'https://www.dynsyslab.org/prof-angela-schoellig/' };
+
+const education: {
+  degree: string;
+  school: string;
+  detail: string;
+  year: string;
+  advisors: { name: string; url: string }[];
+}[] = [
   {
     degree: 'Ph.D., Autonomous Systems',
     school: 'MIT & Woods Hole Oceanographic Institution',
     detail: 'Aeronautics & Astronautics · 5.0/5.0',
     year: '2024',
+    advisors: [HOW, GIRDHAR],
   },
   {
     degree: 'S.M., Autonomous Systems',
     school: 'MIT & Woods Hole Oceanographic Institution',
     detail: 'Aeronautics & Astronautics · 5.0/5.0',
     year: '2020',
+    advisors: [HOW, GIRDHAR],
   },
   {
     degree: 'B.A.Sc., Engineering Science (Robotics)',
     school: 'University of Toronto',
     detail: 'Honours · 3.83/4.0',
     year: '2018',
+    advisors: [SCHOELLIG],
   },
 ];
 
-// Appearance slots — drop a photo into /public/images/appearances/ and set `photo`.
-const appearances = [
-  { title: 'T-Challenge — Award Winner (T-Mobile & Deutsche Telekom)', when: 'Jun 2025', photo: '/images/t-challenge.webp' },
-  { title: 'MozFest · Mozilla Ventures Portfolio Gathering', when: 'Fall 2025', photo: undefined },
-  { title: 'MIT Enterprise AI Forum', when: 'Apr 2026', photo: undefined },
-  { title: 'Ai4 — “Capsa: Making AI Trustworthy”', when: 'Aug 2024', photo: undefined },
-];
+// Appearances — `photo` shows a thumbnail, `href` makes the row link out, `date` (YYYY-MM) sorts.
+// Listed newest-first.
+const appearances: { title: string; when: string; date: string; photo?: string; href?: string }[] = [
+  { title: 'T-Challenge — Award Winner (T-Mobile & Deutsche Telekom)', when: 'Jun 2025', date: '2025-06', photo: '/images/t-challenge.webp' },
+  {
+    title: 'MIT Enterprise AI Forum — Measuring & Managing Risk in Production AI Systems',
+    when: 'Apr 2026',
+    date: '2026-04',
+    href: 'https://www.youtube.com/watch?v=xGzzT7a415I',
+    photo: '/images/appearances/mit-enterprise-ai-forum-2026.webp',
+  },
+  {
+    title: 'MIT Digital Technology & Strategy Conference — Selected Lightning Talk',
+    when: 'Sep 2024',
+    date: '2024-09',
+    href: 'https://www.youtube.com/watch?v=3oaulFAC5tY',
+    photo: '/images/appearances/mit-dtsc-2024.webp',
+  },
+  { title: 'Ai4 — “Capsa: Making AI Trustworthy”', when: 'Aug 2024', date: '2024-08' },
+].sort((a, b) => b.date.localeCompare(a.date));
+
+// Press & media — `date` (YYYY-MM) sorts; listed newest-first.
+const press: { outlet: string; title: string; when: string; date: string; href: string }[] = [
+  {
+    outlet: 'MIT News',
+    title: 'Teaching AI models what they don’t know',
+    when: 'Jun 2025',
+    date: '2025-06',
+    href: 'https://news.mit.edu/2025/themis-ai-teaches-ai-models-what-they-dont-know-0603',
+  },
+  {
+    outlet: 'NVIDIA Blog',
+    title: 'Turning the Tide on Coral Reef Decline: CUREE Robot Dives Deep With Deep Learning',
+    when: 'Nov 2023',
+    date: '2023-11',
+    href: 'https://blogs.nvidia.com/blog/coral-reef-decline-curee-robot-jetson-isaac-omniverse/',
+  },
+].sort((a, b) => b.date.localeCompare(a.date));
 ---
 
 <BaseLayout title="About" description="Stewart Jamieson — Head of Technology at Themis AI, working on risk-aware, uncertainty-aware AI.">
@@ -61,8 +105,9 @@ const appearances = [
       <p>
         I’m an AI researcher and technical leader working on <strong>risk-aware, uncertainty-aware
         machine learning</strong> — AI systems that understand the limits of their own knowledge and
-        act safely because of it. As Head of Technology at <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>,
-        an MIT CSAIL spinoff, I lead the research and product teams building <em>Capsa</em>: a platform
+        act safely because of it. As Head of Technology at <a href={THEMIS_URL} target="_blank" rel="noopener">Themis&nbsp;AI</a>
+        — an MIT CSAIL spinoff founded by <a class="soft-link" href="https://www.mit.edu/~amini/" target="_blank" rel="noopener">Alexander&nbsp;Amini</a>, <a class="soft-link" href="https://danielarus.csail.mit.edu/" target="_blank" rel="noopener">Daniela&nbsp;Rus</a>, and <a class="soft-link" href="https://elahehahmadi.com/" target="_blank" rel="noopener">Elaheh Ahmadi</a> —
+        I lead the research and product teams building <em>Capsa</em>: a platform
         that adds efficient uncertainty quantification to any AI model so that developers can detect
         and eliminate hallucinations, bias, and failure modes before they reach production.
       </p>
@@ -70,7 +115,7 @@ const appearances = [
         This work is the direct continuation of a decade-long research thread. My undergraduate thesis
         at the University of Toronto applied uncertainty quantification to make autonomous-driving
         vision safer. My doctoral research in the MIT–WHOI Joint Program — co-supervised by
-        Prof. Jonathan&nbsp;How (MIT) and Dr.&nbsp;Yogesh&nbsp;Girdhar (WHOI) — developed risk-aware online
+        Prof. <a class="soft-link" href="https://aeroastro.mit.edu/people/jonathan-p-how/" target="_blank" rel="noopener">Jonathan&nbsp;How</a> (MIT) and Dr.&nbsp;<a class="soft-link" href="https://directory.whoi.edu/profile/ygirdhar/" target="_blank" rel="noopener">Yogesh&nbsp;Girdhar</a> (WHOI) — developed risk-aware online
         learning and Bayesian methods that let autonomous robots reason about the <em>value of
         information</em>: deciding what is worth learning, communicating, and acting on when operating
         in unfamiliar, bandwidth-limited environments like the deep sea.
@@ -84,7 +129,7 @@ const appearances = [
     </section>
 
     <!-- Education -->
-    <section class="block">
+    <section class="block" id="education">
       <h2>Education</h2>
       <ul class="edu-list">
         {education.map((e) => (
@@ -94,6 +139,17 @@ const appearances = [
               <span class="edu-degree">{e.degree}</span>
               <span class="edu-school">{e.school}</span>
               <span class="edu-detail">{e.detail}</span>
+              <span class="edu-advisors">
+                Advised by{' '}
+                {e.advisors.map((a, i) => (
+                  <>
+                    {i > 0 && (i === e.advisors.length - 1 ? ' & ' : ', ')}
+                    <a href={a.url} target="_blank" rel="noopener">
+                      {a.name}
+                    </a>
+                  </>
+                ))}
+              </span>
             </span>
           </li>
         ))}
@@ -103,15 +159,50 @@ const appearances = [
     <!-- Appearances -->
     <section class="block">
       <h2>Recent appearances</h2>
-      <p class="block-note">Talks, panels, and gatherings — photos coming soon.</p>
-      <ul class="appear-grid">
-        {appearances.map((a) => (
-          <li class="appear-card">
-            <div class="appear-photo" data-empty={a.photo ? undefined : 'true'}>
-              {a.photo && <img src={a.photo} alt={a.title} loading="lazy" />}
-            </div>
-            <span class="appear-title">{a.title}</span>
-            <span class="appear-when">{a.when}</span>
+      <p class="block-note">Talks, panels, and gatherings.</p>
+      <ul class="appear-list">
+        {appearances.map((a) => {
+          const Wrapper = a.href ? 'a' : 'div';
+          return (
+            <li class="appear-item">
+              <Wrapper
+                class="appear-row"
+                href={a.href}
+                target={a.href?.startsWith('http') ? '_blank' : undefined}
+                rel={a.href ? 'noopener' : undefined}
+              >
+                {a.photo ? (
+                  <img class="appear-thumb" src={a.photo} alt={a.title} loading="lazy" />
+                ) : (
+                  <span class="appear-thumb-empty" aria-hidden="true" />
+                )}
+                <span class="appear-main">
+                  <span class="appear-body">
+                    <span class="appear-title">{a.title}</span>
+                    <span class="appear-when">{a.when}</span>
+                  </span>
+                  {a.href && <span class="appear-arrow" aria-hidden="true">→</span>}
+                </span>
+              </Wrapper>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <!-- Press -->
+    <section class="block">
+      <h2>In the press</h2>
+      <ul class="press-list">
+        {press.map((p) => (
+          <li>
+            <a class="press-row" href={p.href} target="_blank" rel="noopener">
+              <span class="press-main">
+                <span class="press-outlet">{p.outlet}</span>
+                <span class="press-title">{p.title}</span>
+              </span>
+              <span class="press-when">{p.when}</span>
+            </a>
           </li>
         ))}
       </ul>
@@ -200,6 +291,20 @@ const appearances = [
     margin-top: var(--space-l);
     max-width: var(--measure);
   }
+  /* Quiet links for in-prose names — clickable, but they read as text until hovered. */
+  .soft-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-faint);
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .soft-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    text-decoration: none;
+  }
 
   .block {
     margin-top: var(--space-xl);
@@ -253,43 +358,69 @@ const appearances = [
     font-size: 0.8rem;
     color: var(--text-faint);
   }
+  .edu-advisors {
+    margin-top: 0.15rem;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  .edu-advisors a {
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .edu-advisors a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
 
-  .appear-grid {
+  .appear-list {
     list-style: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
-    gap: var(--space-m);
-  }
-  .appear-card {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: var(--space-s);
   }
-  .appear-photo {
-    aspect-ratio: 4 / 3;
+  .appear-row {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    align-items: center;
+    gap: var(--space-m);
+    padding: 0.2rem 0;
+    color: inherit;
+    text-decoration: none;
     border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--bg-subtle);
+  }
+  a.appear-row {
+    transition: color 0.15s ease;
+  }
+  a.appear-row:hover {
+    text-decoration: none;
+  }
+  a.appear-row:hover .appear-title {
+    color: var(--accent);
+  }
+  .appear-thumb {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius);
     border: 1px solid var(--border);
   }
-  .appear-photo[data-empty] {
-    background-image: repeating-linear-gradient(
-      45deg,
-      var(--bg-subtle),
-      var(--bg-subtle) 10px,
-      var(--surface) 10px,
-      var(--surface) 20px
-    );
+  .appear-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
   }
-  .appear-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .appear-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
   }
   .appear-title {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     line-height: 1.3;
   }
@@ -298,11 +429,69 @@ const appearances = [
     font-size: 0.74rem;
     color: var(--text-faint);
   }
+  .appear-arrow {
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  .press-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .press-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    color: inherit;
+    text-decoration: none;
+  }
+  .press-row:hover {
+    text-decoration: none;
+  }
+  .press-row:hover .press-title {
+    color: var(--accent);
+  }
+  .press-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+  }
+  .press-outlet {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+  .press-title {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    transition: color 0.15s ease;
+  }
+  .press-when {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 
   @media (max-width: 30rem) {
     .edu-item {
       grid-template-columns: 1fr;
       gap: 0.2rem;
+    }
+    .appear-row {
+      grid-template-columns: 7rem 1fr;
+      gap: var(--space-s);
     }
   }
 </style>
