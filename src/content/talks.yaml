@@ -1,5 +1,8 @@
 # Talks & appearances. Source of truth: current CV (curated list), enriched with
 # slides/video/poster assets from prior recordings. Each entry needs a unique `id`.
+#
+# Linking company-related talks: link out, don't mirror. Point links at the public
+# recording/page; never self-host company-owned assets. See docs/content-guidelines.md.
 
 # ---- Invited & Selected ----------------------------------------------------
 - id: mit-enterprise-ai-forum-2026
