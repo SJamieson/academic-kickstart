@@ -17,7 +17,6 @@ export const NAV: { label: string; href: string }[] = [
   { label: 'Writing', href: '/writing' },
   { label: 'Research', href: '/research' },
   { label: 'Talks', href: '/talks' },
-  { label: 'Workshops', href: '/workshops' },
   { label: 'About', href: '/about' },
 ];
 

@@ -51,6 +51,15 @@ const groups = TALK_CATEGORY_ORDER.map((category) => ({
         </section>
       ))
     }
+
+    <section class="talk-group workshops-cta">
+      <h2 class="group-heading">Workshops</h2>
+      <p class="workshops-blurb">
+        I also co-organize academic workshops — bringing researchers together at the intersection
+        of AI, robotics, and the natural sciences, at venues including ICRA and ICLR.
+      </p>
+      <a class="workshops-link" href="/workshops">See past &amp; upcoming workshops →</a>
+    </section>
   </div>
 </BaseLayout>
 
@@ -107,6 +116,23 @@ const groups = TALK_CATEGORY_ORDER.map((category) => ({
   .talk-role {
     font-weight: 600;
     color: var(--accent);
+  }
+  .workshops-blurb {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    max-width: 44rem;
+    margin-bottom: var(--space-s);
+  }
+  .workshops-link {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 550;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .workshops-link:hover {
+    text-decoration: underline;
   }
   @media (max-width: 34rem) {
     .talk-item {
