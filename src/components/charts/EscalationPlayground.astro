@@ -13,7 +13,7 @@ const { caption } = Astro.props;
 <figure class="wide chart escalation" data-escalation>
   <div class="ctrls">
     <label><span class="lab">Human-review cost c<sub>h</sub> <output class="o-ch">4</output></span>
-      <input class="s-ch" type="range" min="0" max="20" step="0.5" value="4" /></label>
+      <input class="s-ch" type="range" min="0" max="10" step="0.25" value="4" /></label>
     <label><span class="lab">Serve temperature τ <output class="o-tau">1.0</output></span>
       <input class="s-tau" type="range" min="0.2" max="3" step="0.05" value="1" /></label>
   </div>
@@ -93,8 +93,10 @@ const { caption } = Astro.props;
   function makePopulation(n: number) {
     const r = mulberry32(7), pop: { p: number; harmful: boolean }[] = [];
     for (let i = 0; i < n; i++) {
-      const a = r(), b = r(), c = r();
-      const p = [a, b, c].sort((x, y) => x - y)[1]; // Beta(2,2) = median of 3 uniforms
+      // 2nd-smallest of 12 uniforms ~ Beta(2,11): a right-skewed belief (≈15%
+      // harmful, a mostly-benign queue), so confident-benign inputs carry the
+      // population net positive while the rare harmful tail drives the hard cases.
+      const p = Array.from({ length: 12 }, () => r()).sort((a, b) => a - b)[1];
       pop.push({ p, harmful: r() < p });
     }
     return pop;
@@ -115,7 +117,7 @@ const { caption } = Astro.props;
     const $ = (s: string) => root.querySelector(s) as HTMLElement;
     const sCh = $('.s-ch') as HTMLInputElement, sTau = $('.s-tau') as HTMLInputElement;
 
-    let pCross = 0.35, fnCross = -50; // draggable operating point
+    let pCross = 0.35, fnCross = -20; // draggable operating point (opens net-positive)
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let W = 0, H = 0;
 
@@ -129,7 +131,7 @@ const { caption } = Astro.props;
 
     function render() {
       const ch = +sCh.value, tau = +sTau.value;
-      $('.o-ch').textContent = ch.toFixed(ch % 1 ? 1 : 0);
+      $('.o-ch').textContent = ch % 1 ? ch.toString() : ch.toFixed(0);
       $('.o-tau').textContent = tau.toFixed(2);
 
       const cell = 3;

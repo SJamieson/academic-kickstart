@@ -94,14 +94,14 @@ And the sign of the advice flips with the costs. Under a recall-demanding modera
 Abstention and escalation are the same idea taken to its limit: if no answer clears the bar, don't serve one. Give the system one more action — hand off to a human at a known cost $c_h$ — and the policy becomes a single comparison:<Sidenote n="1">This is a decision-theoretic *closure* of the serving results above; the benchmark measured the net value of serve rules, not literal handoff rates. The escalation threshold is the natural extension of the same expected-reward logic.</Sidenote>
 
 $$
-\text{escalate} \quad \Longleftrightarrow \quad \max_{a}\ \mathbb{E}_\sigma\big[R[a, y]\big] \;<\; -\,c_h.
+\text{escalate} \quad \Longleftrightarrow \quad \max_{a}\ \mathbb{E}_{\sigma_\tau}\big[R[a, y]\big] \;<\; -\,c_h.
 $$
 
-Serve automatically whenever the best available action beats paying for a human; escalate otherwise. This bounds the downside by construction — you never accept an automated decision worse than the cost of oversight — and the human-handoff *rate* falls out of it, which is the quantity that actually decides whether an oversight budget is affordable. Lower $c_h$ (cheap review) escalates more; a steeper cost-asymmetry escalates more; high confidence escalates less.
+The expectation is taken over the *temperature-adjusted* belief $\sigma_\tau \propto \sigma^{\tau}$ from the hedging section — so the same serve temperature that tunes hedging also reshapes the belief *before* this comparison, moving the escalate boundary along with it. Serve automatically whenever the best available action beats paying for a human; escalate otherwise. This bounds the downside by construction — you never accept an automated decision worse than the cost of oversight — and the human-handoff *rate* falls out of it, which is the quantity that actually decides whether an oversight budget is affordable. Lower $c_h$ (cheap review) escalates more; a steeper cost-asymmetry escalates more; higher confidence escalates less; and the serve temperature $\tau$ shifts the boundary too — the three levers you can drag below.
 
 ## Try it
 
-<EscalationPlayground caption="Drag the reward asymmetry — and the cost of a human review — and watch the safe region (amber) and the escalate region (grey) grow." />
+<EscalationPlayground caption="Drag the crosshair to set a belief and miss-cost; use the sliders for human-review cost and serve temperature τ. Watch the safe region (amber) and escalate region (grey) grow — and how lowering τ flattens the belief before the escalate test." />
 
 ## Takeaways
 
