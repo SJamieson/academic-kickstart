@@ -44,7 +44,7 @@
     let cx = 0, binW = 0, pegTop = 0, rowGap = 0, barBaseY = 0, barMaxH = 0, spawnY = 0, ballR = 4, fall = 6;
     let bins = new Array(NBINS).fill(0);
     let dropped = 0;
-    // 0 = idle, 1 = portrait hovered → strengthen pegs and reveal the readout
+    // 0 = idle, 1 = portrait or board hovered → strengthen pegs and reveal the readout
     let reveal = 0, targetReveal = 0;
 
     interface Ball { x: number; tx: number; y: number; row: number; }
@@ -181,11 +181,28 @@
 
     resize();
 
-    // Reveal the readout / strengthen the board while the hero portrait is hovered.
-    const portrait = canvas.closest('.hero')?.querySelector('.hero-portrait img');
-    if (portrait) {
-      portrait.addEventListener('pointerenter', () => (targetReveal = 1));
-      portrait.addEventListener('pointerleave', () => (targetReveal = 0));
+    // Reveal the readout / strengthen the board (and fade the portrait, via the
+    // `is-revealing` class) while the pointer is over the portrait OR the drawn
+    // Galton board region. The canvas is pointer-events:none, so we watch the
+    // whole hero and hit-test against the board's bounds in canvas coordinates.
+    const hero = canvas.closest('.hero');
+    let hot = false;
+    const setHot = (v: boolean) => {
+      if (v === hot) return;
+      hot = v;
+      targetReveal = v ? 1 : 0;
+      hero?.classList.toggle('is-revealing', v);
+    };
+    if (hero) {
+      hero.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const overBoard =
+          x >= w * 0.5 && x <= w * 0.93 && y >= pegTop - rowGap && y <= barBaseY + h * 0.06;
+        const overPortrait = !!(e.target as Element)?.closest?.('.hero-portrait');
+        setHot(overBoard || overPortrait);
+      });
+      hero.addEventListener('pointerleave', () => setHot(false));
     }
     let rt: number;
     window.addEventListener('resize', () => {

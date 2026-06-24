@@ -260,8 +260,10 @@ const facts: { label: string; href: string; external?: boolean }[] = [
     box-shadow: 0 0 0 1.5px var(--accent), var(--shadow);
     transition: opacity 0.35s ease;
   }
-  /* Fade on hover to reveal the Galton board behind the portrait. */
-  .hero-portrait img:hover {
+  /* Fade to reveal the Galton board behind the portrait — on direct hover, and
+     whenever the board itself is hovered (HeroBackdrop toggles `is-revealing`). */
+  .hero-portrait img:hover,
+  .hero.is-revealing .hero-portrait img {
     opacity: 0.12;
   }
   @media (max-width: 52rem) {
