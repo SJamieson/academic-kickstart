@@ -60,7 +60,7 @@ src/
 
 **Routing.** File-based via `src/pages/`. Detail pages (`writing/[slug]`, `publication/[slug]`) read a content collection in `getStaticPaths` and render one page per entry. Legacy Hugo URLs are preserved through the `redirects` map in `astro.config.mjs` — add a redirect there if you rename a slug.
 
-**Content.** To add/edit content you almost never touch `pages/` — you add a file under `src/content/`. The schema in `content.config.ts` validates frontmatter at build time; a schema mismatch fails the build. `featured: true` surfaces an entry on the home page; `draft: true` (posts) hides it.
+**Content.** To add/edit content you almost never touch `pages/` — you add a file under `src/content/`. The schema in `content.config.ts` validates frontmatter at build time; a schema mismatch fails the build. `featured: true` surfaces an entry on the home page; `draft: true` (posts) hides it. For *what's appropriate to publish* — especially the "link out, don't mirror" rule for company-related talks/press — see [`docs/content-guidelines.md`](./docs/content-guidelines.md).
 
 **Layouts & metadata.** Every page renders inside `BaseLayout.astro`, which owns `<head>`: `<title>`, canonical URL, Open Graph, and Person JSON-LD (all derived from `consts.ts` + page props). Pass `preloadImage` for above-the-fold images.
 
