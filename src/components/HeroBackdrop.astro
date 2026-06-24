@@ -42,6 +42,9 @@
 
     let w = 0, h = 0;
     let cx = 0, binW = 0, pegTop = 0, rowGap = 0, barBaseY = 0, barMaxH = 0, spawnY = 0, ballR = 4, fall = 6;
+    // Vertical band (canvas coords) of the lede paragraph, so balls falling past
+    // it on mobile can fade behind the text. ledeBottom <= ledeTop disables it.
+    let ledeTop = -1, ledeBottom = -1;
     let bins = new Array(NBINS).fill(0);
     let dropped = 0;
     // 0 = idle, 1 = portrait or board hovered → strengthen pegs and reveal the readout
@@ -50,16 +53,47 @@
     interface Ball { x: number; tx: number; y: number; row: number; }
     let balls: Ball[] = [];
 
+    const hero = canvas.closest('.hero');
+    const portraitEl = hero?.querySelector('.hero-portrait');
+    const factsEl = hero?.querySelector('.hero-facts');
+    const ledeEl = hero?.querySelector('.hero-lede');
+
     function geom() {
       const bx0 = w * 0.5, bx1 = w * 0.93;
       cx = (bx0 + bx1) / 2;
       binW = (bx1 - bx0) / NBINS;
-      pegTop = h * 0.17;
-      rowGap = h * 0.04;
-      const pegBottom = pegTop + ROWS * rowGap;
-      barBaseY = h * 0.9;
-      barMaxH = Math.max(40, barBaseY - (pegBottom + h * 0.04));
-      spawnY = pegTop - h * 0.06;
+      const mobile = window.matchMedia('(max-width: 52rem)').matches;
+      if (mobile && portraitEl && factsEl) {
+        // Stacked layout: anchor the board to the real DOM so the pegs sit beside
+        // the portrait and the histogram base lines up with the bottom of the
+        // badges — keeping the bold curve/bars in the open space, clear of the lede.
+        const c = canvas.getBoundingClientRect();
+        const p = portraitEl.getBoundingClientRect();
+        const f = factsEl.getBoundingClientRect();
+        // Center the peg lattice on the portrait's center (rather than aligning
+        // edges); keep it a touch shorter than the portrait for breathing room.
+        // The lattice widens downward (bottom-heavy), so nudge it down a little
+        // to make its visual center of mass sit closer to the portrait's center.
+        const latticeH = p.height * 0.85;
+        rowGap = latticeH / ROWS;
+        pegTop = (p.top - c.top) + p.height / 2 - latticeH / 2 + p.height * 0.1;
+        barBaseY = f.bottom - c.top;       // histogram base aligns with the badges' bottom
+        barMaxH = Math.max(40, f.height);  // curve/bars rise across the badges band
+        spawnY = pegTop - rowGap * 1.5;
+        if (ledeEl) {
+          const l = ledeEl.getBoundingClientRect();
+          ledeTop = l.top - c.top;
+          ledeBottom = l.bottom - c.top;
+        }
+      } else {
+        pegTop = h * 0.17;
+        rowGap = h * 0.04;
+        const pegBottom = pegTop + ROWS * rowGap;
+        barBaseY = h * 0.9;
+        barMaxH = Math.max(40, barBaseY - (pegBottom + h * 0.04));
+        spawnY = pegTop - h * 0.06;
+        ledeTop = ledeBottom = -1; // no fade band on the desktop layout
+      }
       ballR = Math.max(3, Math.min(5, w * 0.0042));
       fall = Math.max(3.5, h * 0.012);
     }
@@ -132,9 +166,17 @@
       ctx.lineWidth = 1.6;
       ctx.stroke();
 
-      // falling balls
-      ctx.fillStyle = rgba(color, 0.85);
+      // falling balls — fade them out where they pass behind the lede (mobile),
+      // ramping over a small margin so they recede and re-emerge smoothly.
       for (const b of balls) {
+        let a = 0.85;
+        if (ledeBottom > ledeTop) {
+          const faded = 0.14, m = Math.max(10, ballR * 4);
+          if (b.y >= ledeTop && b.y <= ledeBottom) a = faded;
+          else if (b.y > ledeTop - m && b.y < ledeTop) a = faded + (0.85 - faded) * ((ledeTop - b.y) / m);
+          else if (b.y > ledeBottom && b.y < ledeBottom + m) a = faded + (0.85 - faded) * ((b.y - ledeBottom) / m);
+        }
+        ctx.fillStyle = rgba(color, a);
         ctx.beginPath();
         ctx.arc(b.x, b.y, ballR, 0, Math.PI * 2);
         ctx.fill();
@@ -180,21 +222,36 @@
     }
 
     resize();
+    // Web fonts can reflow the hero after first paint, shifting the portrait and
+    // badges the mobile board anchors to — re-measure once they're ready.
+    document.fonts?.ready.then(() => { resize(); if (reduce) drawStatic(); });
 
-    // Reveal the readout / strengthen the board (and fade the portrait, via the
-    // `is-revealing` class) while the pointer is over the portrait OR the drawn
-    // Galton board region. The canvas is pointer-events:none, so we watch the
-    // whole hero and hit-test against the board's bounds in canvas coordinates.
-    const hero = canvas.closest('.hero');
+    // Desktop: the board sits *behind* the portrait, so hovering the portrait or
+    // board reveals the readout and fades the photo (via `is-revealing`) to expose
+    // the board. Mobile: the board and photo are visually separate, so skip the
+    // hover/fade entirely and just keep the metrics readout permanently active.
+    const mobileMQ = window.matchMedia('(max-width: 52rem)');
     let hot = false;
     const setHot = (v: boolean) => {
-      if (v === hot) return;
+      if (mobileMQ.matches || v === hot) return;
       hot = v;
       targetReveal = v ? 1 : 0;
       hero?.classList.toggle('is-revealing', v);
     };
+    const applyMode = () => {
+      if (mobileMQ.matches) {
+        hot = false;
+        hero?.classList.remove('is-revealing'); // never fade the photo on mobile
+        targetReveal = 1; // metrics readout always on when the board stands alone
+      } else {
+        targetReveal = hot ? 1 : 0;
+      }
+    };
+    applyMode();
+    mobileMQ.addEventListener('change', applyMode);
     if (hero) {
       hero.addEventListener('pointermove', (e) => {
+        if (mobileMQ.matches) return;
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left, y = e.clientY - rect.top;
         const overBoard =

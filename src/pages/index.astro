@@ -278,6 +278,11 @@ const facts: { label: string; href: string; external?: boolean }[] = [
       width: 132px;
       height: 132px;
     }
+    /* Board is visually separate from the photo on mobile — never fade it. */
+    .hero-portrait img:hover,
+    .hero.is-revealing .hero-portrait img {
+      opacity: 1;
+    }
   }
 
   .thread {
