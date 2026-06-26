@@ -18,12 +18,14 @@
 
 - id: t-challenge-2025
   title: "Capsa: Making AI Trustworthy"
-  role: Award Winner & Presenter
+  role: Third Place out of 449 Applicants
   event: T-Challenge Competition (T-Mobile & Deutsche Telekom)
   location: Bonn, Germany
   date: 2025-06-01
   category: selected
   featured: true
+  links:
+    video: https://www.youtube.com/watch?v=j9UNUx9foY8
 
 - id: csail-alliances-2025
   title: Themis AI — Startup Pitch
