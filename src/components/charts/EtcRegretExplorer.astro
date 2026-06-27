@@ -1,0 +1,456 @@
+---
+// Interactive island for "How to Get to Work": tuning explore-then-commit (ETC).
+// The reader drags the exploration length m (pulls per route) and the horizon T
+// (work-days) and watches expected cumulative regret — or, toggled, cumulative
+// reward against the best-average route. An inset plots total regret vs m (the
+// U-curve) so the optimum is visible, and a "resample run" overlays one stochastic
+// life to show that a short exploration can commit to the wrong route.
+// Synthetic: 5 routes with fixed means; expected curves via Monte-Carlo commit
+// probabilities. Mirrors the UncertaintyExplorer / EscalationPlayground pattern.
+interface Props {
+  caption?: string;
+}
+const { caption } = Astro.props;
+---
+
+<figure class="wide chart etc-regret" data-etc>
+  <div class="ee-controls">
+    <label class="ee-field">
+      <span class="ee-lab">Exploration per route <em>m</em>: <output class="ee-m">5</output></span>
+      <input class="ee-s-m" type="range" min="1" max="30" step="1" value="5" />
+    </label>
+    <label class="ee-field">
+      <span class="ee-lab">Horizon <em>T</em> (work-days): <output class="ee-T">200</output></span>
+      <input class="ee-s-T" type="range" min="0" max="1" step="0.01" value="0.5" />
+    </label>
+    <label class="ee-field">
+      <span class="ee-lab">Route noise <em>&sigma;</em>: <output class="ee-sig">0.50</output></span>
+      <input class="ee-s-sig" type="range" min="0.1" max="1.5" step="0.05" value="0.5" />
+    </label>
+    <div class="ee-toggle" role="radiogroup" aria-label="Plot quantity">
+      <label><input type="radio" name="ee-view" value="regret" checked /> Regret</label>
+      <label><input type="radio" name="ee-view" value="reward" /> Reward</label>
+    </div>
+    <button class="ee-resample" type="button">↻ Resample run</button>
+  </div>
+
+  <div class="ee-main" role="img" aria-label="Cumulative regret or reward over the horizon for explore-then-commit"></div>
+
+  <div class="ee-readout">
+    <span class="ee-stat"><strong class="ee-life">—</strong><small>lifetime regret</small></span>
+    <span class="ee-stat"><strong class="ee-pbest">—</strong><small>chance of committing to the best route</small></span>
+    <span class="ee-stat"><strong class="ee-mstar">—</strong><small>regret-minimizing <em>m</em>* at this horizon</small></span>
+  </div>
+
+  <div class="ee-inset" role="img" aria-label="Total regret as a function of exploration length, showing the optimum"></div>
+
+  {caption && <figcaption set:html={caption} />}
+</figure>
+
+<style>
+  .etc-regret {
+    margin-block: var(--space-l);
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .ee-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    align-items: flex-end;
+    margin-bottom: var(--space-s);
+  }
+  .ee-field {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 550;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 12rem;
+    flex: 1;
+  }
+  .ee-lab em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .ee-field output {
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+  .ee-field input[type='range'] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+  .ee-toggle {
+    display: flex;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 550;
+    align-items: center;
+  }
+  .ee-toggle label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+  }
+  .ee-resample {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 550;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .ee-resample:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .ee-main :global(svg),
+  .ee-inset :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+  .ee-main,
+  .ee-inset {
+    overflow-x: auto;
+  }
+  .ee-inset {
+    margin-top: var(--space-s);
+    border-top: 1px dashed var(--border);
+    padding-top: var(--space-s);
+  }
+  .ee-readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    margin-top: var(--space-s);
+  }
+  .ee-stat {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+  }
+  .ee-stat strong {
+    font-size: var(--step-1);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .ee-stat small {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    max-width: 14rem;
+  }
+  figcaption {
+    margin-top: 0.7rem;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+
+<script>
+  import * as Plot from '@observablehq/plot';
+
+  // --- Problem instance: 5 routes, fixed personal mean rewards. The top two are
+  // close (1.0 vs 0.9) so distinguishing them rewards more exploration. ----------
+  const MU = [1.0, 0.9, 0.6, 0.4, 0.2];
+  const K = MU.length;
+  const MU_STAR = Math.max(...MU);
+  const BEST = MU.indexOf(MU_STAR);
+  const GAP = MU.map((m) => MU_STAR - m);
+  const SUM_GAP = GAP.reduce((a, b) => a + b, 0);
+  const M_MAX = 30;
+  const ACCENT = 'var(--accent)';
+  const MUTE = 'var(--text-muted)';
+
+  // Deterministic PRNG (so expected curves are stable while dragging).
+  function mulberry32(seed: number) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(rnd: () => number) {
+    let u = 0;
+    let v = 0;
+    while (u === 0) u = rnd();
+    while (v === 0) v = rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // Slider 0..1 -> horizon on a log scale (20 .. 2000 days), rounded a bit.
+  function sliderToT(x: number) {
+    const t = Math.round(20 * Math.pow(2000 / 20, x));
+    return Math.max(20, Math.min(2000, Math.round(t / 5) * 5));
+  }
+
+  // Monte-Carlo probability that each route ends up with the highest empirical
+  // mean after m pulls each (empirical mean ~ Normal(mu, sigma^2 / m)). A fixed
+  // seed keeps the expected curves flicker-free as the reader drags.
+  function commitProbs(m: number, sigma: number, N = 1500) {
+    const rnd = mulberry32(0xc0ffee);
+    const se = sigma / Math.sqrt(m);
+    const counts = new Array(K).fill(0);
+    for (let i = 0; i < N; i++) {
+      let bestVal = -Infinity;
+      let bestIdx = 0;
+      for (let a = 0; a < K; a++) {
+        const v = MU[a] + se * gauss(rnd);
+        if (v > bestVal) {
+          bestVal = v;
+          bestIdx = a;
+        }
+      }
+      counts[bestIdx]++;
+    }
+    return counts.map((c) => c / N);
+  }
+
+  interface Pt {
+    day: number;
+    val: number;
+  }
+
+  function computeAll(m: number, T: number, sigma: number) {
+    const exploreLen = Math.min(K * m, T);
+    const committed = K * m < T;
+    const probs = committed ? commitProbs(m, sigma) : null;
+    const gCommitRegret = probs ? probs.reduce((s, p, a) => s + p * GAP[a], 0) : 0;
+    const gCommitReward = probs ? probs.reduce((s, p, a) => s + p * MU[a], 0) : 0;
+
+    const reg: Pt[] = [];
+    const rew: Pt[] = [];
+    const opt: Pt[] = [];
+    let cumReg = 0;
+    let cumRew = 0;
+    for (let d = 0; d < T; d++) {
+      if (d < exploreLen) {
+        cumReg += GAP[d % K];
+        cumRew += MU[d % K];
+      } else {
+        cumReg += gCommitRegret;
+        cumRew += gCommitReward;
+      }
+      const day = d + 1;
+      reg.push({ day, val: cumReg });
+      rew.push({ day, val: cumRew });
+      opt.push({ day, val: MU_STAR * day });
+    }
+
+    // U-curve: total expected regret as a function of exploration length m.
+    const ucurve: { m: number; total: number }[] = [];
+    for (let mm = 1; mm <= M_MAX; mm++) {
+      const eLen = K * mm;
+      let total: number;
+      if (eLen >= T) {
+        total = 0;
+        for (let d = 0; d < T; d++) total += GAP[d % K];
+      } else {
+        const p = commitProbs(mm, sigma, 900);
+        const gc = p.reduce((s, pa, a) => s + pa * GAP[a], 0);
+        total = mm * SUM_GAP + (T - eLen) * gc;
+      }
+      ucurve.push({ m: mm, total });
+    }
+    let mStar = 1;
+    for (const u of ucurve) if (u.total < ucurve[mStar - 1].total) mStar = u.m;
+
+    return {
+      reg,
+      rew,
+      opt,
+      ucurve,
+      mStar,
+      exploreLen,
+      committed,
+      pBest: probs ? probs[BEST] : null,
+      lifetimeRegret: reg.length ? reg[reg.length - 1].val : 0,
+    };
+  }
+
+  // One stochastic life: simulate m real pulls per route, commit to the empirical
+  // best. Returns the committed route so we can draw a single realized trajectory.
+  function sampleCommit(m: number, sigma: number, rnd: () => number) {
+    let bestVal = -Infinity;
+    let A = 0;
+    for (let a = 0; a < K; a++) {
+      let s = 0;
+      for (let k = 0; k < m; k++) s += MU[a] + sigma * gauss(rnd);
+      const mean = s / m;
+      if (mean > bestVal) {
+        bestVal = mean;
+        A = a;
+      }
+    }
+    return A;
+  }
+  function runTrajectory(A: number, m: number, T: number, useReward: boolean): Pt[] {
+    const exploreLen = Math.min(K * m, T);
+    const out: Pt[] = [];
+    let cum = 0;
+    for (let d = 0; d < T; d++) {
+      const inExplore = d < exploreLen;
+      const arm = inExplore ? d % K : A;
+      cum += useReward ? MU[arm] : GAP[arm];
+      out.push({ day: d + 1, val: cum });
+    }
+    return out;
+  }
+
+  function fmt(x: number) {
+    return x >= 100 ? x.toFixed(0) : x.toFixed(1);
+  }
+
+  function initExplorer(root: HTMLElement) {
+    const mainEl = root.querySelector('.ee-main') as HTMLElement;
+    const insetEl = root.querySelector('.ee-inset') as HTMLElement;
+    const sM = root.querySelector('.ee-s-m') as HTMLInputElement;
+    const sT = root.querySelector('.ee-s-T') as HTMLInputElement;
+    const sSig = root.querySelector('.ee-s-sig') as HTMLInputElement;
+    const outM = root.querySelector('.ee-m') as HTMLElement;
+    const outT = root.querySelector('.ee-T') as HTMLElement;
+    const outSig = root.querySelector('.ee-sig') as HTMLElement;
+    const lifeEl = root.querySelector('.ee-life') as HTMLElement;
+    const pbestEl = root.querySelector('.ee-pbest') as HTMLElement;
+    const mstarEl = root.querySelector('.ee-mstar') as HTMLElement;
+    const resampleBtn = root.querySelector('.ee-resample') as HTMLButtonElement;
+
+    let runArm: number | null = null; // realized commit arm for the overlay, if any
+    let resampleSeed = 1;
+
+    function currentView(): 'regret' | 'reward' {
+      const checked = root.querySelector('input[name="ee-view"]:checked') as HTMLInputElement;
+      return (checked?.value as 'regret' | 'reward') ?? 'regret';
+    }
+
+    function render() {
+      const m = parseInt(sM.value, 10);
+      const T = sliderToT(parseFloat(sT.value));
+      const sigma = parseFloat(sSig.value);
+      const view = currentView();
+      outM.textContent = String(m);
+      outT.textContent = String(T);
+      outSig.textContent = sigma.toFixed(2);
+
+      const d = computeAll(m, T, sigma);
+
+      // Readouts
+      lifeEl.textContent = fmt(d.lifetimeRegret);
+      pbestEl.textContent = d.pBest == null ? '—' : (d.pBest * 100).toFixed(0) + '%';
+      mstarEl.textContent = String(d.mStar);
+
+      const overlay = runArm == null ? null : runTrajectory(runArm, m, T, view === 'reward');
+
+      // --- Main panel ---------------------------------------------------------
+      const marks: any[] = [
+        Plot.ruleX([d.exploreLen], { stroke: MUTE, strokeWidth: 1, strokeDasharray: '3 3' }),
+      ];
+      if (view === 'regret') {
+        const end = d.reg[d.reg.length - 1];
+        if (overlay) marks.push(Plot.line(overlay, { x: 'day', y: 'val', stroke: MUTE, strokeWidth: 1, strokeOpacity: 0.75 }));
+        marks.push(
+          Plot.line(d.reg, { x: 'day', y: 'val', stroke: ACCENT, strokeWidth: 2 }),
+          Plot.dot([end], { x: 'day', y: 'val', fill: ACCENT, r: 4 }),
+          Plot.text([end], {
+            x: 'day',
+            y: 'val',
+            text: () => `lifetime regret ${fmt(end.val)}`,
+            dy: -10,
+            dx: -4,
+            textAnchor: 'end',
+            fontWeight: 600,
+            fill: 'var(--text)',
+          }),
+        );
+      } else {
+        const endR = d.rew[d.rew.length - 1];
+        const endO = d.opt[d.opt.length - 1];
+        if (overlay) marks.push(Plot.line(overlay, { x: 'day', y: 'val', stroke: MUTE, strokeWidth: 1, strokeOpacity: 0.75 }));
+        marks.push(
+          Plot.line(d.opt, { x: 'day', y: 'val', stroke: MUTE, strokeWidth: 1.5, strokeDasharray: '5 4' }),
+          Plot.line(d.rew, { x: 'day', y: 'val', stroke: ACCENT, strokeWidth: 2 }),
+          // The gap between the two endpoints IS the lifetime regret.
+          Plot.link([{ x: endR.day, y1: endR.val, y2: endO.val }], {
+            x1: 'x',
+            x2: 'x',
+            y1: 'y1',
+            y2: 'y2',
+            stroke: 'var(--text)',
+            strokeWidth: 1.4,
+          }),
+          Plot.text([{ x: endR.day, y: (endR.val + endO.val) / 2 }], {
+            x: 'x',
+            y: 'y',
+            text: () => `regret ${fmt(d.lifetimeRegret)}`,
+            dx: -6,
+            textAnchor: 'end',
+            fontWeight: 600,
+            fill: 'var(--text)',
+          }),
+          Plot.text([endO], { x: 'day', y: 'val', text: () => 'best-average route', dy: -8, dx: -4, textAnchor: 'end', fill: MUTE }),
+        );
+      }
+
+      const main = Plot.plot({
+        height: 300,
+        marginLeft: 54,
+        marginRight: 16,
+        x: { label: 'Work-day →', grid: true, domain: [0, d.reg.length] },
+        y: { label: view === 'regret' ? '↑ Cumulative regret' : '↑ Cumulative reward', grid: true, zero: true },
+        marks,
+      });
+      mainEl.replaceChildren(main);
+
+      // --- Inset: U-curve -----------------------------------------------------
+      const uCur = d.ucurve[m - 1];
+      const uStar = d.ucurve[d.mStar - 1];
+      const inset = Plot.plot({
+        height: 170,
+        marginLeft: 54,
+        x: { label: 'exploration length m (per route) →', domain: [1, M_MAX] },
+        y: { label: '↑ total regret', grid: true, zero: true },
+        marks: [
+          Plot.line(d.ucurve, { x: 'm', y: 'total', stroke: MUTE, strokeWidth: 1.5 }),
+          Plot.ruleX([m], { stroke: ACCENT, strokeWidth: 1, strokeDasharray: '3 3' }),
+          Plot.dot([uStar], { x: 'm', y: 'total', fill: '#0f766e', r: 4.5, symbol: 'star' }),
+          Plot.dot([uCur], { x: 'm', y: 'total', fill: ACCENT, r: 3.5 }),
+          Plot.text([uStar], { x: 'm', y: 'total', text: () => `best m* = ${d.mStar}`, dy: -10, fontWeight: 600, fill: 'var(--text)' }),
+        ],
+      });
+      insetEl.replaceChildren(inset);
+    }
+
+    sM.addEventListener('input', () => {
+      runArm = null; // commit arm depends on m, so the overlay is no longer valid
+      render();
+    });
+    sSig.addEventListener('input', () => {
+      runArm = null;
+      render();
+    });
+    sT.addEventListener('input', render);
+    root.querySelectorAll('input[name="ee-view"]').forEach((el) => el.addEventListener('change', render));
+    resampleBtn.addEventListener('click', () => {
+      const m = parseInt(sM.value, 10);
+      const sigma = parseFloat(sSig.value);
+      runArm = sampleCommit(m, sigma, mulberry32(resampleSeed++));
+      render();
+    });
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-etc]').forEach(initExplorer);
+</script>

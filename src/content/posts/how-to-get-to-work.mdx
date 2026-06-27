@@ -10,6 +10,7 @@ math: true
 
 import Figure from '../../components/Figure.astro';
 import Sidenote from '../../components/Sidenote.astro';
+import EtcRegretExplorer from '../../components/charts/EtcRegretExplorer.astro';
 
 > A few years ago, I published a paper called "Finding the optimal exploration-exploitation trade-off online
 > through Bayesian risk estimation and minimization". It is 50 pages long and its main contribution is an 
@@ -162,40 +163,14 @@ the less regret you incur during the "commit" phase. So, "tuning it" means choos
 such that it's not so long that you spend a large chunk of your career incurring high exploration regret, but also not so 
 short that you commit too early to the wrong choice and spend the majority of your career paying for your rashness.
 
-{/* CHART: etc-regret-explorer  (the centerpiece interactive)
-    Goal: let the reader *feel* the explore/commit trade-off — explore too little and you risk
-          a lifetime on a worse route; explore too much and you pay for it up front — and see
-          that the best exploration length depends on the horizon.
-    Visual:
-      - Main panel with a REGRET / REWARD toggle:
-          * Regret view (default): expected CUMULATIVE REGRET vs. day over horizon T. Explore
-            phase climbs steadily; at commit the slope drops to ~0 if the best route was found,
-            or keeps climbing if a worse one was committed to. CALL OUT the final value — the
-            lifetime regret — as a labeled endpoint marker/annotation at the right edge (this
-            is the number the reader should walk away with).
-          * Reward view: expected CUMULATIVE REWARD vs. day for the ETC agent, plotted against
-            the optimal-route reward curve (always-take-best-average) as a dashed reference
-            line. The vertical gap between them at the right edge IS the lifetime regret —
-            annotate it so the two views visibly tell the same story.
-      - Inset / small-multiple: total expected regret as a function of exploration length m —
-        the U-shaped curve — with a marker at the current m so the optimum is visible.
-    Controls:
-      - m: exploration pulls per route (slider, ~1–30).  [user asked: keep "5 trials" as a
-           natural default]
-      - T: horizon / total work-days (slider, ~20–2000, log scale).  [the requested variable]
-      - sigma: reward noise (slider, optional) — shows noisier routes need more exploration.
-      - "Resample run" button: overlay one stochastic trajectory on the expected curve to
-        convey variance (why you can commit to the wrong route).
-    Readouts: total expected regret; P(committed to the best route); the optimal m* for the
-              current T (highlighted on the inset).
-    Data: synthetic. K = 5 routes with fixed true means, e.g. [1.0, 0.9, 0.6, 0.4, 0.2] (note
-          the two close "good" routes — sets up the allocation discussion below), Gaussian
-          noise sigma per arm. Expected curves via client-side Monte Carlo (~500–2000 sim runs
-          averaged); arm means/sigma configurable in the component.
-    Behavior to verify: as T grows, optimal m* visibly increases; as sigma grows, m* increases.
-    Caption: "Tuning explore-then-commit. Drag the exploration length and the horizon: the
-              exploration length that minimizes lifetime regret grows with how long you'll
-              commute — there is no single right answer." */}
+<EtcRegretExplorer caption="Tuning explore-then-commit over 5 routes (true average rewards 1.0, 0.9, 0.6, 0.4, 0.2). Drag the exploration length <em>m</em> and the horizon <em>T</em>: the exploration length that minimizes lifetime regret grows with how long you'll commute — there is no single right answer. Toggle to <em>Reward</em> to see the same story as the gap below the best-average route, and hit <em>Resample run</em> to watch a single unlucky exploration commit to a worse route." />
+
+{/* NOTE: live component at src/components/charts/EtcRegretExplorer.astro.
+    Original spec for reference: main panel toggles regret/reward (reward view shows ETC vs the
+    dashed best-average route, gap = lifetime regret); inset is the U-curve of total regret vs m
+    with the optimum m* marked; resample overlays one stochastic life. Behavior verified: m*
+    grows with T and with sigma. Tunables (means, sigma range, horizon range) live in the
+    component constants. */}
 
 ## Issues with Explore-Then-Commit
 
