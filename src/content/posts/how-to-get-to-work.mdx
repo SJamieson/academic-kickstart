@@ -220,6 +220,30 @@ beyond the modeling assumptions which we made above, but they each also have the
 However, we will continue to refer back to this motivating example of choosing routes to work, while minimizing lifetime 
 regret (maximizing lifetime reward), to provide grounded examples.
 
+{/* SUGGESTION (stronger EBRM tease — harvest the discomfort the interactive just created;
+    not committed prose, rework/adopt as you like). Verify the EBRM characterization against
+    the paper before using — it's deliberately hedged but still a claim.
+
+    Notice what the interactive above quietly forced you to do: before commuting a single day,
+    you had to choose how long to explore. And the best choice depended on the gaps between the
+    routes, how noisy each one is, and how long you'll be commuting — precisely the things you
+    don't yet know. In other words, explore-then-commit asks you to guess the answer to the very
+    question you're trying to answer. Guess too low and you risk a lifetime on a worse route;
+    guess too high and you burn good years re-testing routes you'd already written off.
+
+    The way out is to stop pre-committing: a strategy that watches its own evidence pile up and
+    decides for itself when a route has earned the commitment — pouring trials into the two
+    contenders still neck-and-neck and barely glancing at the obvious also-rans (the smarter
+    allocation we sketched above). It would never need to be told an exploration length, because
+    it would infer, day by day, how sure it is — and the same logic carries into far messier
+    problems than a commute, where options aren't independent, new ones appear over time, and a
+    wrong call costs a patient rather than ten minutes.
+
+    That is the thread this series follows: up the ladder of policies — optimism in the face of
+    uncertainty, Thompson's sampling idea from the 1930s — to EBRM, which reasons directly about
+    the one thing ETC ignores: the risk that its own next decision is the wrong one, and what
+    reducing that risk is worth. */}
+
 {/* TODO (open threads for review / companion posts):
      - Wire up "[the next article](link pending)" once the slug for post 2 exists.
      - Terminology: "actual regret" vs "observed regret" is a nice intuition, but the technical
