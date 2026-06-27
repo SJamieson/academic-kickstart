@@ -57,15 +57,24 @@ in academic literature: the *multi-armed bandit problem*. Essentially, we call t
 way, ranging from deciding which assets to invest in to determining which new experimental drug is most effective for 
 treating a particular ailment.
 
-{/* FIGURE (cartoon): commute-as-bandit
-    Goal: cement the metaphor — "routes to work" == "arms of a bandit".
-    Visual: a friendly cartoon. Left: a person/house. Right: the office. Between them, 3–5
-            distinct routes drawn as paths; each route's start is styled as a slot-machine
-            lever/arm. One path subtly nicer (greener/faster) to hint a "best" arm, but the
-            traveler can't see that yet. Light, hand-drawn feel, theme-aware colors.
+{/* FIGURE (cartoon): commute-routes-map
+    Goal: make the problem concrete and personal — a few real routes home→office, each with a
+          human trade-off and a personal reward value. NO slot machines / bandit imagery.
+    Visual: a friendly hand-drawn map. House on one side, office on the other. 3–4 distinct
+            routes drawn as colored paths, each with a little annotation tag and a personal
+            reward number, e.g.:
+              - Highway: "fastest, but bumper-to-bumper if there's an accident"   reward ~7
+              - Backroads: "longer, but scenic and never gridlocked"              reward ~8
+              - Shortcut: "short drive, but passes the smelly factory"            reward ~5
+              - Main St:  "reliable middle-of-the-road option"                    reward ~6
+            Rewards are THIS person's values (emphasize they're personal/subjective). Keep it
+            light; theme-aware colors.
+    Note: reward numbers above are placeholders — pick final values together; ideally make the
+          "best on average" route non-obvious so it motivates exploration.
     Format: static SVG/WebP via <Figure size="wide">. Hand off to illustration step.
-    Caption: "Each route is an 'arm'; choosing a route each day is 'pulling' it. You can't
-              see the payouts in advance — only what you get after you commit to a route." */}
+    Caption: "A few ways to get to work, each with its own quirks. The reward on each route is
+              personal — it bakes in how much *you* mind traffic, detours, or a smelly factory.
+              You won't know the averages until you've tried them a few times." */}
 
 A core aspect of this type of multi-armed bandit problem is that there is some amount of randomness in the
 outcome every time you pull a particular arm. For example, traffic tends to vary randomly day-to-day, which means
@@ -113,6 +122,21 @@ person regrets a decision only if they know (or at least suspect) that it was su
 been). In decision-theory, we often consider the case where a person/"agent" doesn't actually know that their decision was 
 wrong. We call this the "actual regret" incurred by the agent, to distinguish it from "known", *observed* regret.
 
+{/* TODO (decision): introduce the EXPECTED vs INSTANCE regret distinction?
+     Two different baselines the reader can mean by "regret":
+       (a) expected: baseline = the best-AVERAGE route. You regret a choice because that route
+           is generally worse. This is what our algorithms minimize; day-to-day noise washes
+           out over a lifetime.
+       (b) instance/hindsight: baseline = whichever route happened to be fastest THAT day. Even
+           the best-average route racks this up on unlucky days — it's irreducible noise, not a
+           bad decision.
+     Recommendation: a SHORT treatment here (a paragraph or a Sidenote) so readers don't
+     conflate "slow that day" with "generally a worse route", and tie it to the interactive
+     (the U-curve = expected regret; the "resample run" overlay = instance noise). Save the
+     formal pseudo-regret vs realized-regret version, and WHY expected regret is the well-posed
+     objective, for the technical companion. NB: keep this axis separate from the
+     actual-vs-observed (aware-vs-unaware) axis above — they're orthogonal. */}
+
 Maximizing lifetime reward is mathematically equivalent to minimizing lifetime regret, trying to do one is exactly the same
 as trying to do the other. It is generally easier to work with lifetime regret, as it has the nice property that it can never
 be negative, and the "best" possible value is 0. With lifetime reward, it's not obvious if a given value is "good" or not 
@@ -130,9 +154,16 @@ short that you commit too early to the wrong choice and spend the majority of yo
           a lifetime on a worse route; explore too much and you pay for it up front — and see
           that the best exploration length depends on the horizon.
     Visual:
-      - Main panel: expected CUMULATIVE REGRET vs. day, over the horizon T. The explore phase
-        climbs steadily; at the commit point the slope drops to ~0 if the best route was found,
-        or keeps climbing if a worse route was committed to.
+      - Main panel with a REGRET / REWARD toggle:
+          * Regret view (default): expected CUMULATIVE REGRET vs. day over horizon T. Explore
+            phase climbs steadily; at commit the slope drops to ~0 if the best route was found,
+            or keeps climbing if a worse one was committed to. CALL OUT the final value — the
+            lifetime regret — as a labeled endpoint marker/annotation at the right edge (this
+            is the number the reader should walk away with).
+          * Reward view: expected CUMULATIVE REWARD vs. day for the ETC agent, plotted against
+            the optimal-route reward curve (always-take-best-average) as a dashed reference
+            line. The vertical gap between them at the right edge IS the lifetime regret —
+            annotate it so the two views visibly tell the same story.
       - Inset / small-multiple: total expected regret as a function of exploration length m —
         the U-shaped curve — with a marker at the current m so the optimum is visible.
     Controls:
