@@ -26,6 +26,19 @@ The subsequent articles formalize the concepts here and go through the proposed 
 
 *More familiar or technical readers may wish to skip ahead to [the next article](link pending).*
 
+{/* TODO (deferred — build once more of the series exists): SERIES STORY-MAP at the top of
+    every article.
+    Goal: a small "you are here" diagram showing the two parallel tracks and how articles relate.
+    Visual: two horizontal lanes — "Intuition" (top) and "Formal" (bottom) — each a left→right
+            sequence of article nodes in reading order. Vertical/diagonal connectors link each
+            intuition post to its formal companion (and any prerequisite links). The current
+            article is highlighted; published nodes link out, unpublished ones are dimmed.
+    Implementation: a SHARED component (not per-post prose), data-driven from a single series
+            manifest (ordered list of {slug, track-level: intuition|formal, pairId, title,
+            published}). Drop it into PostLayout (or an MDX include) so it renders identically
+            on every post; relates to the `series` tag + level-marker convention noted at EOF.
+    Defer until: ~3-4 posts exist so the connections are meaningful. Keep as TODO for now. */}
+
 ## The Motivating Problem
 
 Let's consider the age-old problem of deciding which route to take to work. Suppose you have a new job that requires
