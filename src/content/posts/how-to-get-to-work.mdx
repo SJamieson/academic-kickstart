@@ -38,7 +38,7 @@ doesn't give you any information about another.
 
 Whenever you take a given route to work, you obtain some amount of **reward**. This "reward" will be defined 
 differently for different people, but it is essentially a number that indicates how much you liked the commute. 
-For some, the rewrad of a route will simply be the inverse of how long the commute took. 
+For some, the reward of a route will simply be the inverse of how long the commute took. 
 For others, it might depend on the commute length and time spent in traffic; some people prefer a slightly
 longer commute by a more circuitous route if it means that they're not sitting in gridlock the entire time. In any case
 we will assume that there exists some personalized, mathematical function, a *reward function*, capable of describing 
@@ -57,7 +57,17 @@ in academic literature: the *multi-armed bandit problem*. Essentially, we call t
 way, ranging from deciding which assets to invest in to determining which new experimental drug is most effective for 
 treating a particular ailment.
 
-A core aspect of this type multi-armed bandit problems is that there is some amount of randomness in the
+{/* FIGURE (cartoon): commute-as-bandit
+    Goal: cement the metaphor — "routes to work" == "arms of a bandit".
+    Visual: a friendly cartoon. Left: a person/house. Right: the office. Between them, 3–5
+            distinct routes drawn as paths; each route's start is styled as a slot-machine
+            lever/arm. One path subtly nicer (greener/faster) to hint a "best" arm, but the
+            traveler can't see that yet. Light, hand-drawn feel, theme-aware colors.
+    Format: static SVG/WebP via <Figure size="wide">. Hand off to illustration step.
+    Caption: "Each route is an 'arm'; choosing a route each day is 'pulling' it. You can't
+              see the payouts in advance — only what you get after you commit to a route." */}
+
+A core aspect of this type of multi-armed bandit problem is that there is some amount of randomness in the
 outcome every time you pull a particular arm. For example, traffic tends to vary randomly day-to-day, which means
 that a given route may be quick one day but slow the next. Some arms may be more random than others, for example
 if one route is usually quite quick but is also more prone to delays caused by traffic accidents.
@@ -69,6 +79,16 @@ strategy. Suppose that you try every route once. And then, because you might hav
 time you tried a route, you try every route again. And to build your confidence further, you try each of them 
 a few more times. Finally, you determine which route tends to give you the most reward, on average, and from then 
 on you always take that particular "best" route. We call this strategy "explore-then-commit", or **ETC**.
+
+{/* FIGURE (diagram): etc-timeline
+    Goal: show ETC's two phases at a glance.
+    Visual: a horizontal timeline of work-days. Left segment "EXPLORE" — small icons of all
+            routes being tried in rotation (round-robin). A vertical "commit" marker. Right
+            segment "COMMIT (exploit)" — only the chosen route repeated to the horizon T.
+            Annotate the explore length m and the horizon T.
+    Format: static SVG/WebP via <Figure>. Could later be promoted to the interactive below.
+    Caption: "Explore-then-commit: try every route m times, then commit to the apparent best
+              for the rest of the horizon T." */}
 
 This can actually be a very effective strategy, but it introduces a new question: *how many times should you test 
 each route before committing to one of them?* The answer to this question turns out to depend on a variety of factors,
@@ -105,6 +125,34 @@ the less regret you incur during the "commit" phase. So, "tuning it" means choos
 such that it's not so long that you spend a large chunk of your career incurring high exploration regret, but also not so 
 short that you commit too early to the wrong choice and spend the majority of your career paying for your rashness.
 
+{/* CHART: etc-regret-explorer  (the centerpiece interactive)
+    Goal: let the reader *feel* the explore/commit trade-off — explore too little and you risk
+          a lifetime on a worse route; explore too much and you pay for it up front — and see
+          that the best exploration length depends on the horizon.
+    Visual:
+      - Main panel: expected CUMULATIVE REGRET vs. day, over the horizon T. The explore phase
+        climbs steadily; at the commit point the slope drops to ~0 if the best route was found,
+        or keeps climbing if a worse route was committed to.
+      - Inset / small-multiple: total expected regret as a function of exploration length m —
+        the U-shaped curve — with a marker at the current m so the optimum is visible.
+    Controls:
+      - m: exploration pulls per route (slider, ~1–30).  [user asked: keep "5 trials" as a
+           natural default]
+      - T: horizon / total work-days (slider, ~20–2000, log scale).  [the requested variable]
+      - sigma: reward noise (slider, optional) — shows noisier routes need more exploration.
+      - "Resample run" button: overlay one stochastic trajectory on the expected curve to
+        convey variance (why you can commit to the wrong route).
+    Readouts: total expected regret; P(committed to the best route); the optimal m* for the
+              current T (highlighted on the inset).
+    Data: synthetic. K = 5 routes with fixed true means, e.g. [1.0, 0.9, 0.6, 0.4, 0.2] (note
+          the two close "good" routes — sets up the allocation discussion below), Gaussian
+          noise sigma per arm. Expected curves via client-side Monte Carlo (~500–2000 sim runs
+          averaged); arm means/sigma configurable in the component.
+    Behavior to verify: as T grows, optimal m* visibly increases; as sigma grows, m* increases.
+    Caption: "Tuning explore-then-commit. Drag the exploration length and the horizon: the
+              exploration length that minimizes lifetime regret grows with how long you'll
+              commute — there is no single right answer." */}
+
 ## Issues with Explore-Then-Commit
 
 The ETC algorithm was one of the earliest developed for the multi-armed bandit (MAB) problem, and it can be surprisingly
@@ -114,11 +162,23 @@ pulls* (called "trials") *where they are needed most*.
 For example, suppose there are two "good" routes to work, and eight "bad" ones, but one of the good routes is at least
 marginally better than the other. You probably don't need to test out the bad routes more than a couple of times to 
 establish that they can't compete with the two good routes, but it might take many trials to compare the two good routes
-before you can tell which one of them the best. This reflects the intuition that you should assign more exploratory trials
+before you can tell which one of them is the best. This reflects the intuition that you should assign more exploratory trials
 to the routes which are "promising" contenders, and fewer to those that are obviously inferior. This reflects a trial 
 allocation that is inversely proportional to the perceived *gap* between a given arm and whichever one appears to be the best.
 
-Similarly, the more "random" routes require more tests to detemrine how good they actually are. It is quick
+{/* FIGURE (diagram): allocation-equal-vs-smart
+    Goal: visualize ETC's core weakness — it spends trials uniformly.
+    Visual: two side-by-side bar charts over the same 10 routes (2 good, 8 clearly bad).
+            Left "ETC (equal allocation)": all bars the same height. Right "Smart allocation":
+            tall bars on the two close contenders, short bars on the obvious losers. Same total
+            trials (same total area) to make the reallocation legible.
+    Format: static SVG/WebP via <Figure size="wide">. (Optional later upgrade: make it
+            interactive — drag the gap between the two good routes and watch smart allocation
+            shift trials toward them. Flag if we want to build this for article 1 or defer.)
+    Caption: "ETC tests every route equally; a smarter policy pours trials into the routes that
+              are still in contention and barely touches the obvious losers." */}
+
+Similarly, the more "random" routes require more tests to determine how good they actually are. It is quick
 to identify the average reward of a stable, consistent route. It may require many trials, however, to determine the average
 reward of a highly variable one. It becomes even more complicated when we consider that *it takes a few trials to even
 determine how random/variable a given route is.* 
@@ -141,8 +201,10 @@ beyond the modeling assumptions which we made above, but they each also have the
 However, we will continue to refer back to this motivating example of choosing routes to work, while minimizing lifetime 
 regret (maximizing lifetime reward), to provide grounded examples.
 
-{/* TODO: continue drafting in the IDE. Suggested next beats — feel free to ignore:
-     - the commute as a relatable framing of exploration vs. exploitation
-     - what "sequential decision problem" means, informally
-     - why a principled (Bayesian) approach beats heuristics
-     - where EBRM fits and what it actually buys you */}
+{/* TODO (open threads for review / companion posts):
+     - Wire up "[the next article](link pending)" once the slug for post 2 exists.
+     - Terminology: "actual regret" vs "observed regret" is a nice intuition, but the technical
+       companion should reconcile it with the standard terms (pseudo-regret / expected regret /
+       realized regret) so technical readers aren't tripped up.
+     - Series convention: decide how to mark intuition-level vs formal posts (e.g. a `series`
+       tag + a level indicator) and whether to add a small "companion piece" cross-link block. */}
