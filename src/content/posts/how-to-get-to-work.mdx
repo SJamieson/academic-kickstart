@@ -11,7 +11,135 @@ math: true
 import Figure from '../../components/Figure.astro';
 import Sidenote from '../../components/Sidenote.astro';
 
-A few years ago, I published a paper called "Finding the optimal exploration-exploitation trade-off online through Bayesian risk estimation and minimization". It is 50 pages long and its main contribution is an algorithm titled "Endogenous Bayesian Regret Minimization", or EBRM, for short. While much of that complexity was required to ensure the contributions were thoroughly and properly presented, my coauthors and I all recognized that it would be a rather opaque text for most, which was a shame because it presents a solution architecture to a very real and common problem. It was one of my thesis advisors, Yogi Girdhar, who specifically suggested that I should prepare a more usable, digestible version of the paper and its contributions. I'm happy to finally have the chance to do that here, on my blog.
+> A few years ago, I published a paper called "Finding the optimal exploration-exploitation trade-off online
+> through Bayesian risk estimation and minimization". It is 50 pages long and its main contribution is an 
+> algorithm titled "Endogenous Bayesian Regret Minimization", or EBRM, for short. While much of that complexity 
+> was required to ensure the contributions were thoroughly and properly presented, my coauthors and I all recognized 
+> that it would be a rather opaque text for most, which was a shame because it presents a solution architecture to a 
+> very real and common problem. It was one of my thesis advisors, Yogi Girdhar, who specifically suggested that I 
+> should prepare a more usable, digestible version of the paper and its contributions. I'm happy to finally have the 
+> chance to do that here, on my blog.
+
+*This first article is presented as a gentle introduction to a core problem archetype in decision theory, which can be used
+to model everything from choosing a route to work, to assigning patients to experimental medicines in medical trials.
+The subsequent articles formalize the concepts here and go through the proposed algorithms in mathematical detail.*
+
+*More familiar or technical readers may wish to skip ahead to [the next article](link pending).*
+
+## The Motivating Problem
+
+Let's consider the age-old problem of deciding which route to take to work. Suppose you have a new job that requires
+commuting to a location you've never travelled to before. There are naturally a range of options, and
+we'll assume that you know all of the possible routes but don't have Waze or any other such tools available to tell you
+which one would be the fastest on any given day.
+
+To simplify the modeling problem, let's assume that every route is fully independent of the others, so taking one route
+doesn't give you any information about another.
+
+Whenever you take a given route to work, you obtain some amount of **reward**. This "reward" will be defined 
+differently for different people, but it is essentially a number that indicates how much you liked the commute. 
+For some, the rewrad of a route will simply be the inverse of how long the commute took. 
+For others, it might depend on the commute length and time spent in traffic; some people prefer a slightly
+longer commute by a more circuitous route if it means that they're not sitting in gridlock the entire time. In any case
+we will assume that there exists some personalized, mathematical function, a *reward function*, capable of describing 
+how much you liked a given commute.
+
+In decision-theory research, we typically assume that people (and robots, and AIs) are trying to maximize their 
+**lifetime reward**. Their lifetime reward is the total amount of reward they accumulate over every decision they
+ever make. This would mean that, ideally, a person would identify the best route (for *them*, based on *their*
+personal reward function).
+
+So, the question becomes: **what is the most intelligent way for a person to decide how to get to work each day?**
+
+Our assumptions from above make it so that this can be modelled as a very specific problem type that has been widely studied
+in academic literature: the *multi-armed bandit problem*. Essentially, we call the different routes to work different
+*arms*, and we refer to picking a particular route one day as "pulling an arm". Many other problems can be modelled this
+way, ranging from deciding which assets to invest in to determining which new experimental drug is most effective for 
+treating a particular ailment.
+
+A core aspect of this type multi-armed bandit problems is that there is some amount of randomness in the
+outcome every time you pull a particular arm. For example, traffic tends to vary randomly day-to-day, which means
+that a given route may be quick one day but slow the next. Some arms may be more random than others, for example
+if one route is usually quite quick but is also more prone to delays caused by traffic accidents.
+
+## A Straightforward Approach
+
+So, how does an intelligent, rational agent decide how to get to work each day? Let's start by considering a simple
+strategy. Suppose that you try every route once. And then, because you might have been lucky (or unlucky) the first
+time you tried a route, you try every route again. And to build your confidence further, you try each of them 
+a few more times. Finally, you determine which route tends to give you the most reward, on average, and from then 
+on you always take that particular "best" route. We call this strategy "explore-then-commit", or **ETC**.
+
+This can actually be a very effective strategy, but it introduces a new question: *how many times should you test 
+each route before committing to one of them?* The answer to this question turns out to depend on a variety of factors,
+such as:
+- How "random" (variable) is the reward obtained from each route?
+- How many different routes are there?
+- How long do you expect to be working at this particular company/location?
+
+To see why these matter, let's suppose there are 10 different ways to get to work and you only expect to be commuting
+to this location for the next 2 months. With only ~50 work days at this location, testing each route 5 times would mean
+that you would only finally take advantage of knowing the "best" route to work on your last day!
+
+On the other hand, suppose you expect to work at this location for the next 30 years. In that case, testing each route only
+5 times might be far from enough. Suppose that you were unlucky in 3-4 of your test runs for a particular route which,
+in reality, was the best one for you based on your "reward function". This could cause you to commit to a different route, 
+a *sub-optimal route*, at the end of your first 2 months, which you would end up taking every day for the next 358 months.
+
+Whenever you take a sub-optimal route to work, you incur some amount of **regret**. Regret is essentially the opposite of 
+reward. It represents *how much extra reward you could have obtained by taking a different route* (or "pulling a different 
+arm"). **Importantly**, the decision-theory definition of regret differs from the typical mainstream definition. Typically, a
+person regrets a decision only if they know (or at least suspect) that it was sub-optimal (i.e., not as good as it could have 
+been). In decision-theory, we often consider the case where a person/"agent" doesn't actually know that their decision was 
+wrong. We call this the "actual regret" incurred by the agent, to distinguish it from "known", *observed* regret.
+
+Maximizing lifetime reward is mathematically equivalent to minimizing lifetime regret, trying to do one is exactly the same
+as trying to do the other. It is generally easier to work with lifetime regret, as it has the nice property that it can never
+be negative, and the "best" possible value is 0. With lifetime reward, it's not obvious if a given value is "good" or not 
+relative to the other choices a person could have made. However, an agent with no lifetime regret means that it never made
+a bad decision in its whole life.
+
+The explore-then-commit strategy can often do a good job of maximizing reward (i.e., minimizing regret), at least when it is
+tuned properly. The key facet of ETC is that you incur a lot of regret during the "explore" phase, but the more you explore,
+the less regret you incur during the "commit" phase. So, "tuning it" means choosing the length of the exploration period 
+such that it's not so long that you spend a large chunk of your career incurring high exploration regret, but also not so 
+short that you commit too early to the wrong choice and spend the majority of your career paying for your rashness.
+
+## Issues with Explore-Then-Commit
+
+The ETC algorithm was one of the earliest developed for the multi-armed bandit (MAB) problem, and it can be surprisingly
+effective given its simplicity. However, it has many notable flaws. Most critically, it does a poor job of *allocating arm 
+pulls* (called "trials") *where they are needed most*.
+
+For example, suppose there are two "good" routes to work, and eight "bad" ones, but one of the good routes is at least
+marginally better than the other. You probably don't need to test out the bad routes more than a couple of times to 
+establish that they can't compete with the two good routes, but it might take many trials to compare the two good routes
+before you can tell which one of them the best. This reflects the intuition that you should assign more exploratory trials
+to the routes which are "promising" contenders, and fewer to those that are obviously inferior. This reflects a trial 
+allocation that is inversely proportional to the perceived *gap* between a given arm and whichever one appears to be the best.
+
+Similarly, the more "random" routes require more tests to detemrine how good they actually are. It is quick
+to identify the average reward of a stable, consistent route. It may require many trials, however, to determine the average
+reward of a highly variable one. It becomes even more complicated when we consider that *it takes a few trials to even
+determine how random/variable a given route is.* 
+
+These considerations suggest that it is possible to design a much better algorithm than ETC, which ignores the factors above
+and assigns an equal number of exploratory trials to all contenders. This algorithmic regret (sub-optimality) means that using ETC
+generally causes an agent to incur more "regret" than another one would. While this algorithmic regret may not always be a 
+major concern (for example, when using it to choose your morning commute each day), in other applications like medical trials
+these "regrets" may represent things like poor health outcomes that we are strongly motivated to avoid. This has motivated
+the development of significantly more capable, but generally more complicated, algorithms for making good decisions in these
+types of contexts. We call these algorithms "policies", which is a general term for an algorithm that tells an agent what 
+to do.
+
+## Where to next?
+
+The following article in the series will present a brief summary of algorithms (policies) developed for use in multi-armed 
+bandit problems. Some of the algorithms that will be presented, including the "Endogenous Bayesian Regret Minimization" 
+(EBRM) algorithm that will be the focal point of this series, are significantly more general and can be applied to problems 
+beyond the modeling assumptions which we made above, but they each also have their own limitations. 
+However, we will continue to refer back to this motivating example of choosing routes to work, while minimizing lifetime 
+regret (maximizing lifetime reward), to provide grounded examples.
 
 {/* TODO: continue drafting in the IDE. Suggested next beats — feel free to ignore:
      - the commute as a relatable framing of exploration vs. exploitation
